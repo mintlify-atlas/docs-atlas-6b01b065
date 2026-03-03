@@ -1,80 +1,332 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Start playing as a Bard in minutes with this quick guide
 ---
 
-## Get started in three steps
+## Your first bard character
 
-Get your documentation site running locally and make your first customization.
+This guide will get you playing as a Bard quickly, covering the basics of equipment, spells, and playstyle.
 
-### Step 1: Set up your local environment
+<Note>
+  This guide assumes you've already [installed Bards RPG](/installation) and all required dependencies.
+</Note>
+
+## Step 1: Craft your starting gear
+
+<Steps>
+  <Step title="Gather wool for armor">
+    Bard armor is crafted from wool. Collect at least 24 wool blocks (any color) to craft a full set of Entertainer's Garb.
+    
+    **Recipe:** Use standard armor crafting patterns with wool instead of leather or metal.
+  </Step>
+  
+  <Step title="Craft a basic weapon">
+    Choose your starting weapon type:
+    
+    - **Iron Rapier** - For melee-focused combat (3.6 damage, -2.0 attack speed)
+    - **Wooden Lute** - For balanced Arcane/Healing spells (+3.5 to both schools)
+    - **Golden Lyre** - For healing-focused support (+1.75 Arcane, +5.25 Healing)
+    
+    <Tip>
+      Start with a Wooden Lute for the most versatile playstyle.
+    </Tip>
+  </Step>
+  
+  <Step title="Find or craft a Bard spell book">
+    The Bard spell book contains all bard spells. You can:
+    - Find it as loot in chests
+    - Craft it using the recipe (check JEI/REI for details)
+    - Get it from Creative mode inventory
+  </Step>
+</Steps>
+
+## Step 2: Equip your character
+
+<Steps>
+  <Step title="Wear your bard armor">
+    Equip all four pieces of Entertainer's Garb:
+    - Entertainer Hat (helmet)
+    - Entertainer Garb (chestplate)
+    - Entertainer Trousers (leggings)
+    - Entertainer Boots
+    
+    Each piece grants:
+    - 15% Arcane spell power
+    - 15% Healing spell power
+    - 3% movement speed
+  </Step>
+  
+  <Step title="Hold your weapon">
+    Equip your lute, lyre, or rapier in your main hand. This determines your combat style and spell power.
+  </Step>
+  
+  <Step title="Access your spell book">
+    Keep the Bard spell book in your inventory or hotbar. This gives you access to all bard spells.
+  </Step>
+</Steps>
+
+## Step 3: Learn the spell system
+
+### Accessing spells
+
+Bards use the Spell Engine spell system:
+
+1. **Open the spell selection wheel** - Default keybind: `R` (check your controls)
+2. **Select a spell slot** - Move your mouse to choose a slot
+3. **Assign a spell** - Click on a spell from your available spells
+4. **Cast spells** - Use the cast keybind (default: `C`) to cast your selected spell
+
+<Tip>
+  You can assign different spells to multiple slots for quick access during combat.
+</Tip>
+
+### Your first spells
+
+Start with these beginner-friendly spells:
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+  <Accordion title="Troubadour's Minuet" icon="shield">
+    **Tier:** 1  
+    **Type:** Area buff/damage  
+    **Range:** 5 blocks
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
+    Your defensive foundation. Channels a song that:
+    - Deals damage to nearby enemies
+    - Reduces incoming damage by 5% per stack (stacks up to 3 times)
+    - Affects all allies in range, including yourself
+    
+    **Best for:** Surviving difficult fights, protecting your party
+    
+    **Usage:** Cast before engaging enemies to build up defensive stacks
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+  
+  <Accordion title="Magical Ballad" icon="music">
+    **Tier:** 2  
+    **Type:** Projectile  
+    **Range:** 20 blocks
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
+    Your primary damage dealer. Launches magical ballads that:
+    - Pierce through up to 3 targets
+    - Deal solid Arcane damage
+    - Buff allies hit with +2.5% Attack Damage and Spell Power per stack
+    
+    **Best for:** Dealing damage while supporting allies
+    
+    **Usage:** Aim at groups of enemies to maximize pierce value and ally buffs
+  </Accordion>
+  
+  <Accordion title="Encore" icon="repeat">
+    **Tier:** 3  
+    **Type:** Area damage/support  
+    **Range:** 12 blocks
+    
+    Your utility spell. Instantly affects a wide area:
+    - Damages all nearby enemies
+    - Reduces active spell cooldowns for allies by 20%
+    - No channel time - instant cast
+    
+    **Best for:** Helping your party spam spells, burst damage
+    
+    **Usage:** Use after allies cast expensive spells to reset their cooldowns
+  </Accordion>
+  
+  <Accordion title="Army's Paeon" icon="flag">
+    **Tier:** 4  
+    **Type:** Buff  
+    **Range:** 5 blocks
+    
+    Your advanced support spell. Creates a powerful buff:
+    - Buffs nearby allies for 8 seconds
+    - When YOU damage enemies (melee, arrows, or spells), allies gain stacking damage bonuses
+    - Effects scale with your Healing spell power
+    
+    **Best for:** Coordinated group play, boss fights
+    
+    **Usage:** Cast on your party, then actively fight to trigger the stacking buff
   </Accordion>
 </AccordionGroup>
 
-### Step 2: Deploy your changes
+## Step 4: Combat basics
+
+Bards combine three combat styles:
+
+### Support playstyle
+
+<Steps>
+  <Step title="Position near allies">
+    Stay within 5-12 blocks of your party members to include them in your area spells.
+  </Step>
+  <Step title="Maintain buffs">
+    Keep Troubadour's Minuet or Army's Paeon active on your allies during fights.
+  </Step>
+  <Step title="Use Encore strategically">
+    Time Encore casts after allies use major cooldowns to help them cast again.
+  </Step>
+</Steps>
+
+### Damage playstyle
+
+<Steps>
+  <Step title="Spam Magical Ballad">
+    Use your lute to fire piercing projectiles at enemy groups.
+  </Step>
+  <Step title="Weave in melee attacks">
+    Between spell casts, use your rapier for quick melee damage.
+  </Step>
+  <Step title="Manage resources">
+    Watch your exhaustion (mana) bar. Don't spam all spells at once.
+  </Step>
+</Steps>
+
+### Hybrid playstyle
+
+<Steps>
+  <Step title="Start with defensive buffs">
+    Cast Troubadour's Minuet before engaging.
+  </Step>
+  <Step title="Engage with projectiles">
+    Use Magical Ballad from range to soften enemies.
+  </Step>
+  <Step title="Finish with melee">
+    Switch to rapier for mobile melee cleanup.
+  </Step>
+</Steps>
+
+## Step 5: Progression path
+
+### Early game (Iron/Gold)
+
+- Craft Iron Rapier or Wooden Lute
+- Wear Entertainer's Garb (Tier 1 armor)
+- Learn Troubadour's Minuet and Magical Ballad
+- Focus on exploring and gathering resources
+
+### Mid game (Diamond)
+
+- Upgrade to Diamond Rapier, Diamond Lute, or Diamond Lyre
+- Craft Troubadour's Garb (Tier 2 armor) - requires wool and better materials
+- Add Encore to your spell rotation
+- Start farming for enchantments
+
+### Late game (Netherite)
+
+- Craft Netherite weapons and Netherite Troubadour's Garb (Tier 3)
+- Master Army's Paeon for group play
+- Optimize your spell power with enchantments
+- Consider mod compatibility content (Ruby, Aeternium, Aether weapons)
+
+### Endgame (Unique/Storyteller)
+
+- Hunt for boss-themed unique weapons (requires Loot N Explore/Arsenal):
+  - Dragon's Rapier (Ender Dragon)
+  - Siren's Lyre (Elder Guardian)
+  - Withered Rapier (Wither)
+  - Glacial Rapier (Ice boss)
+- Craft Storyteller's Garb (requires Armory RPGs mod) - Tier 5 armor with 30% spell power
+- Perfect your build with max-level enchantments
+
+## Important mechanics
 
 <AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+  <Accordion title="Spell power scaling" icon="chart-line">
+    Your spell damage and healing scale with:
+    - **Weapon bonuses** - Lutes give balanced Arcane/Healing, Lyres favor Healing
+    - **Armor bonuses** - Each armor piece adds 15-30% spell power depending on tier
+    - **Enchantments** - Spell power enchantments multiply your effectiveness
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
+    Full Entertainer's Garb with a Wooden Lute gives you:
+    - ~60% Arcane spell power bonus (15% × 4 pieces)
+    - ~60% Healing spell power bonus
+    - 3.5 bonus Arcane/Healing power from the lute
+  </Accordion>
+  
+  <Accordion title="Movement speed stacking" icon="person-running">
+    Each piece of bard armor grants movement speed:
+    - Entertainer: 3% per piece = 12% total
+    - Troubadour: 4% per piece = 16% total
+    - Netherite Troubadour: 5% per piece = 20% total
+    - Storyteller: 6% per piece = 24% total
+    
+    This makes bards highly mobile, perfect for supporting allies across the battlefield.
+  </Accordion>
+  
+  <Accordion title="Stacking buffs" icon="layer-group">
+    Many bard spells stack:
+    - Troubadour's Minuet: Up to 3 stacks of damage reduction
+    - Magical Ballad: Up to 3 stacks of offensive power
+    - Army's Paeon: Up to 3 stacks of damage bonus
+    
+    The maximum stacks are affected by your spell power. Higher spell power = easier to reach max stacks.
+  </Accordion>
+  
+  <Accordion title="Exhaustion system" icon="battery-half">
+    Spells consume exhaustion (mana). Each spell costs:
+    - 0.2 exhaustion (20% of your mana bar)
+    
+    This means you can cast 5 spells before depleting your mana. Exhaustion regenerates over time.
   </Accordion>
 </AccordionGroup>
 
-### Step 3: Go live
+## Tips for new bards
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+<CardGroup cols={2}>
+  <Card title="Stay mobile" icon="wind">
+    Use your movement speed bonus to kite enemies and reposition for optimal spell range.
+  </Card>
+  <Card title="Manage cooldowns" icon="clock">
+    All spells have 10-second cooldowns. Don't wait - cast on cooldown for maximum impact.
+  </Card>
+  <Card title="Group synergy" icon="users">
+    Bards shine in groups. Your buffs multiply your allies' effectiveness.
+  </Card>
+  <Card title="Experiment with weapons" icon="flask">
+    Try all three weapon types to find your preferred playstyle.
+  </Card>
+</CardGroup>
+
+## Common mistakes to avoid
+
+<Warning>
+  **Don't overlook your armor** - Bard armor provides massive spell power bonuses. Never fight without a full set equipped.
+</Warning>
+
+<Warning>
+  **Don't spam spells** - With 10-second cooldowns and exhaustion costs, plan your casts carefully.
+</Warning>
+
+<Warning>
+  **Don't stand still while channeling** - Bard spells allow movement during channeling. Stay mobile!
+</Warning>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card
+    title="Weapons guide"
+    icon="sword"
+    href="/gameplay/weapons"
+  >
+    Deep dive into all weapon types and their stats
+  </Card>
+  <Card
+    title="Spells reference"
+    icon="book-sparkles"
+    href="/gameplay/spells"
+  >
+    Complete spell documentation with mechanics and numbers
+  </Card>
+  <Card
+    title="Armor sets"
+    icon="vest"
+    href="/gameplay/armor"
+  >
+    Learn about all armor tiers and their bonuses
+  </Card>
+  <Card
+    title="Progression guide"
+    icon="chart-line"
+    href="/guides/progression"
+  >
+    Learn about equipment tiers and advancement
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

@@ -1,0 +1,207 @@
+---
+title: BardsMod class
+description: Core class for Bards RPG mod initialization and configuration
+---
+
+## BardsMod
+
+The `BardsMod` class is the main entry point for the Bards RPG mod, providing static methods for initialization and registration, as well as configuration managers for various mod systems.
+
+**Location:** `com/bards/BardsMod.java:22`
+
+## Constants
+
+### MOD_ID
+
+```java
+public static final String MOD_ID = "bards_rpg";
+```
+
+The mod identifier used for all registry entries and resource locations.
+
+**Location:** `BardsMod.java:23`
+
+## Configuration managers
+
+### itemConfig
+
+```java
+public static ConfigManager<ConfigFile.Equipment> itemConfig = new ConfigManager<>
+        ("equipment", Default.itemConfig)
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+Manages equipment configuration including armor sets and weapons. Uses `Default.itemConfig` as the default configuration.
+
+**Location:** `BardsMod.java:24-29`
+
+<ParamField path="equipment" type="ConfigFile.Equipment">
+  Configuration file name for equipment settings
+</ParamField>
+
+<ParamField path="Default.itemConfig" type="ConfigFile.Equipment">
+  Default equipment configuration values
+</ParamField>
+
+### effectsConfig
+
+```java
+public static ConfigManager<ConfigFile.Effects> effectsConfig = new ConfigManager<>
+        ("effects", new ConfigFile.Effects())
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+Manages status effect configurations for custom bard effects like Ballad and Troubadour's Minuet.
+
+**Location:** `BardsMod.java:31-36`
+
+<ParamField path="effects" type="ConfigFile.Effects">
+  Configuration file name for effect settings
+</ParamField>
+
+### villageConfig
+
+```java
+public static ConfigManager<StructurePoolConfig> villageConfig = new ConfigManager<>
+        ("villages", Default.villageConfig)
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+Manages village structure pool configurations, controlling where bard-themed structures (like pubs) spawn in villages.
+
+**Location:** `BardsMod.java:38-43`
+
+<ParamField path="villages" type="StructurePoolConfig">
+  Configuration file name for village structure settings
+</ParamField>
+
+<ParamField path="Default.villageConfig" type="StructurePoolConfig">
+  Default village configuration including pub structures for desert, savanna, plains, taiga, and snowy villages
+</ParamField>
+
+### tweaksConfig
+
+```java
+public static ConfigManager<TweaksConfig> tweaksConfig = new ConfigManager<>
+        ("tweaks", new TweaksConfig())
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+Manages development and compatibility tweaks. Contains the `ignore_items_required_mods` flag for development environments.
+
+**Location:** `BardsMod.java:45-50`
+
+<ParamField path="tweaks" type="TweaksConfig">
+  Configuration file name for tweak settings
+</ParamField>
+
+## Methods
+
+### init()
+
+```java
+public static void init() {
+    itemConfig.refresh();
+    effectsConfig.refresh();
+    villageConfig.refresh();
+    tweaksConfig.refresh();
+    CustomSpellImpacts.registerCustomImpacts();
+    if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+        tweaksConfig.value.ignore_items_required_mods = true;
+    }
+}
+```
+
+Initializes the mod by refreshing all configuration managers and registering custom spell impacts. In development environments, automatically enables `ignore_items_required_mods` to allow testing items with mod dependencies.
+
+**Location:** `BardsMod.java:52-61`
+
+**Execution order:**
+1. Refreshes item configuration from disk
+2. Refreshes effects configuration from disk
+3. Refreshes village configuration from disk
+4. Refreshes tweaks configuration from disk
+5. Registers custom spell impacts (e.g., `armies_paeon_impact`)
+6. Enables mod requirement bypass in development mode
+
+### registerItems()
+
+```java
+public static void registerItems() {
+    Group.BARDS = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(Armors.troubadourArmorSet.armorSet().head.asItem()))
+            .displayName(Text.translatable("itemGroup.bards_rpg.general"))
+            .build();
+    Registry.register(Registries.ITEM_GROUP, Group.KEY, Group.BARDS);
+    BardBooks.register();
+    Armors.register(itemConfig.value.armor_sets);
+    Weapons.register(itemConfig.value.weapons);
+    itemConfig.save();
+}
+```
+
+Registers all mod items including the creative tab, spell books, armor sets, and weapons. Creates the Bards creative item group with the Troubadour Hat as the icon.
+
+**Location:** `BardsMod.java:63-73`
+
+**Registration order:**
+1. Creates the Bards item group with troubadour helmet icon
+2. Registers the item group to Minecraft's registry
+3. Registers spell books (bard spell book)
+4. Registers armor sets (entertainer, troubadour, netherite troubadour, storyteller)
+5. Registers weapons (rapiers, lutes, lyres)
+6. Saves the item configuration to disk
+
+### registerEffects()
+
+```java
+public static void registerEffects() {
+    BardsEffects.register(effectsConfig.value);
+    effectsConfig.save();
+}
+```
+
+Registers all custom status effects defined in `BardsEffects` and saves the configuration.
+
+**Location:** `BardsMod.java:75-78`
+
+**Effects registered:**
+- Ballad - Increases attack damage and spell power
+- Troubadour's Minuet - Reduces damage taken
+- Army's Paeon - Buff stash effect
+- Army's Motivation - Damage-on-hit effect
+
+### id()
+
+```java
+public static Identifier id(String path) {
+    return Identifier.of(MOD_ID, path);
+}
+```
+
+Utility method for creating namespaced identifiers with the `bards_rpg` namespace.
+
+**Location:** `BardsMod.java:79-81`
+
+<ParamField path="path" type="String">
+  The path component of the identifier
+</ParamField>
+
+**Returns:** `Identifier` - A namespaced identifier in the format `bards_rpg:path`
+
+**Example:**
+```java
+Identifier bookId = BardsMod.id("bard"); // Returns: bards_rpg:bard
+```

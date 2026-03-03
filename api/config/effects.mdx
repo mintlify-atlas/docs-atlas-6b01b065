@@ -1,0 +1,270 @@
+---
+title: "Effects configuration"
+description: "Configure custom status effects for the Bards RPG mod"
+---
+
+## Overview
+
+The effects configuration API manages all custom status effects in the Bards RPG mod. Configuration is handled through the `effectsConfig` manager, which reads from and writes to the `effects.json` file in the mod's config directory.
+
+## Configuration manager
+
+The effects configuration is managed by `BardsMod.effectsConfig`:
+
+```java
+public static ConfigManager<ConfigFile.Effects> effectsConfig = new ConfigManager<>
+        ("effects", new ConfigFile.Effects())
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+### Properties
+
+<ParamField path="name" type="string" default="effects">
+  The configuration file name (generates `effects.json`)
+</ParamField>
+
+<ParamField path="directory" type="string" default="bards_rpg">
+  The mod's configuration directory
+</ParamField>
+
+<ParamField path="sanitize" type="boolean" default="true">
+  Automatically sanitizes and validates configuration values
+</ParamField>
+
+## Status effects
+
+The mod includes four custom status effects:
+
+### Ballad
+
+**Effect ID:** `bards_rpg:ballad`
+
+**Description:** Increases Attack Damage & Spell Power
+
+**Category:** Beneficial
+
+**Color:** `0x9999ff` (light blue)
+
+**Attributes:**
+
+```json
+{
+  "effects": {
+    "bards_rpg:ballad": {
+      "attributes": [
+        {
+          "id": "spell_power:generic",
+          "value": 0.025,
+          "operation": "ADD_MULTIPLIED_BASE"
+        },
+        {
+          "id": "minecraft:generic.attack_damage",
+          "value": 0.025,
+          "operation": "ADD_MULTIPLIED_BASE"
+        }
+      ]
+    }
+  }
+}
+```
+
+<ParamField path="attributes[0]" type="object">
+  Increases generic spell power by 2.5% per amplifier level
+</ParamField>
+
+<ParamField path="attributes[1]" type="object">
+  Increases attack damage by 2.5% per amplifier level
+</ParamField>
+
+### Troubadour's minuet
+
+**Effect ID:** `bards_rpg:troubadours_minuet`
+
+**Description:** Reduces damage taken
+
+**Category:** Beneficial
+
+**Color:** `0x9999ff` (light blue)
+
+**Attributes:**
+
+```json
+{
+  "effects": {
+    "bards_rpg:troubadours_minuet": {
+      "attributes": [
+        {
+          "id": "spell_engine:damage_taken",
+          "value": -0.05,
+          "operation": "ADD_MULTIPLIED_BASE"
+        }
+      ]
+    }
+  }
+}
+```
+
+<ParamField path="attributes[0]" type="object">
+  Reduces damage taken by 5% per amplifier level
+</ParamField>
+
+### Army's paeon
+
+**Effect ID:** `bards_rpg:armys_paeon`
+
+**Description:** The player buffs nearby allies if they damage enemies with melee hits, arrows or spells
+
+**Category:** Beneficial
+
+**Color:** `0x9999ff` (light blue)
+
+**Attributes:** None (behavior-only effect)
+
+```json
+{
+  "effects": {
+    "bards_rpg:armys_paeon": {
+      "attributes": []
+    }
+  }
+}
+```
+
+### Army's motivation
+
+**Effect ID:** `bards_rpg:armys_motivation`
+
+**Description:** With each melee, arrow, and spell hit you deal magic damage according to the highest attribute, scaling with the effect amplifier
+
+**Category:** Beneficial
+
+**Color:** `0x9999ff` (light blue)
+
+**Attributes:** None (behavior-only effect)
+
+```json
+{
+  "effects": {
+    "bards_rpg:armys_motivation": {
+      "attributes": []
+    }
+  }
+}
+```
+
+## Configuration structure
+
+The effects configuration file uses the following structure:
+
+```json
+{
+  "effects": {
+    "[effect_id]": {
+      "attributes": [
+        {
+          "id": "[attribute_id]",
+          "value": 0.0,
+          "operation": "ADD_VALUE|ADD_MULTIPLIED_BASE|ADD_MULTIPLIED_TOTAL"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Effect configuration
+
+<ParamField path="effects.[effect_id]" type="object">
+  The effect identifier (e.g., `bards_rpg:ballad`)
+</ParamField>
+
+<ParamField path="effects.[effect_id].attributes" type="array">
+  Array of attribute modifiers applied by this effect
+</ParamField>
+
+### Attribute modifiers
+
+<ParamField path="id" type="string" required>
+  The attribute identifier to modify
+  
+  Common attributes:
+  - `spell_power:generic` - Generic spell power
+  - `spell_power:arcane` - Arcane spell power
+  - `spell_power:healing` - Healing spell power
+  - `minecraft:generic.attack_damage` - Melee attack damage
+  - `spell_engine:damage_taken` - Damage reduction
+</ParamField>
+
+<ParamField path="value" type="float" required>
+  The modifier value
+  
+  - For `ADD_VALUE`: Direct numerical bonus
+  - For `ADD_MULTIPLIED_BASE`: Percentage of base value (0.025 = 2.5%)
+  - For `ADD_MULTIPLIED_TOTAL`: Percentage of total value
+</ParamField>
+
+<ParamField path="operation" type="string" required>
+  The modification operation
+  
+  - `ADD_VALUE` - Adds the value directly
+  - `ADD_MULTIPLIED_BASE` - Multiplies base value by (1 + value)
+  - `ADD_MULTIPLIED_TOTAL` - Multiplies total value by (1 + value)
+</ParamField>
+
+## Usage example
+
+Registering and using effects:
+
+```java
+import com.bards.BardsMod;
+import com.bards.effect.BardsEffects;
+
+// Refresh configuration from file
+BardsMod.effectsConfig.refresh();
+
+// Register effects with configuration
+BardsEffects.register(BardsMod.effectsConfig.value);
+
+// Save modified configuration
+BardsMod.effectsConfig.save();
+```
+
+### Applying effects in code
+
+```java
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+
+// Apply Ballad effect for 200 ticks (10 seconds) at amplifier level 0
+LivingEntity entity = // ... your entity
+entity.addStatusEffect(new StatusEffectInstance(
+    BardsEffects.BALLAD.effect,
+    200,  // duration in ticks
+    0     // amplifier (0 = level 1)
+));
+```
+
+## Synchronized effects
+
+All bard effects are configured as synchronized, meaning they automatically sync between server and client:
+
+```java
+for (var entry : entries) {
+    Synchronized.configure(entry.effect, true);
+}
+```
+
+This ensures that effect visuals and behavior are consistent across multiplayer environments.
+
+## File location
+
+The effects configuration file is located at:
+
+```
+config/bards_rpg/effects.json
+```
+
+This file is automatically created with default values on first run and can be edited to customize effect attributes.

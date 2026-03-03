@@ -1,0 +1,259 @@
+---
+title: Spells
+description: Complete guide to all Bard spells including damage values, cooldowns, and strategic usage
+---
+
+Bards have access to powerful spells that combine offensive damage with supportive buffs. All Bard spells use the Arcane spell school for damage and the Healing school for buffs.
+
+## Spell mechanics
+
+<Note>
+Bard spells feature unique channeling animations using lute instruments and produce musical note particles. Most spells benefit from both Arcane and Healing spell power.
+</Note>
+
+### Spell costs
+
+All Bard spells use:
+- **Exhaust cost:** 0.2 (20% of total exhaust)
+- **Cooldown:** 10 seconds
+
+### Casting animations
+
+Bard spells use custom animations:
+- **Channel animation:** `bards_rpg:lute_channel`
+- **Release animation:** `bards_rpg:lute_release`
+
+## Active spells
+
+### Troubadour's Minuet
+
+<Accordion title="Spell overview">
+  **Tier:** 1  
+  **School:** Arcane (damage), Healing (buff)  
+  **Range:** 5 blocks  
+  **Target Type:** Area (includes caster)  
+  **Cooldown:** 10 seconds  
+  **Exhaust Cost:** 20%
+  
+  A song that deals damage to enemies while reducing incoming damage for allies. This area-of-effect spell affects all entities within range, including the caster.
+</Accordion>
+
+<Accordion title="Casting details">
+  **Cast Duration:** 5 seconds  
+  **Movement Speed:** 150% during cast  
+  **Channel Ticks:** 10  
+  **Vertical Range Multiplier:** 1.5×
+  
+  The spell channels for a brief period while musical particles emanate from the caster in bright green.
+</Accordion>
+
+<Accordion title="Effects">
+  **Damage Impact:**
+  - Base damage: **0.5** (scales with Arcane power)
+  - School: Arcane
+  
+  **Buff Impact:**
+  - Effect: Troubadour's Minuet
+  - Base duration: **10 seconds**
+  - Base amplifier: **1**
+  - Max stacks: **3**
+  - School: Healing
+  - Amplifier cap scales with spell power (0.1× multiplier)
+  - Reduces damage taken by **5% per stack** (multiplicative)
+  
+  Each application can stack up to 3 times, providing up to **15% damage reduction** at maximum stacks.
+</Accordion>
+
+<Tip>
+Use Troubadour's Minuet at the start of combat to build up damage reduction stacks for your team while dealing consistent damage to enemies.
+</Tip>
+
+### Magical Ballad
+
+<Accordion title="Spell overview">
+  **Tier:** 2  
+  **School:** Arcane (damage), Healing (buff)  
+  **Range:** 20 blocks  
+  **Target Type:** Aim  
+  **Cooldown:** 10 seconds  
+  **Exhaust Cost:** 20%
+  
+  Launch magical projectiles that pierce through multiple enemies, dealing damage and increasing offensive stats for allies.
+</Accordion>
+
+<Accordion title="Casting details">
+  **Cast Duration:** 4 seconds  
+  **Movement Speed:** 150% during cast  
+  **Channel Ticks:** 20
+  
+  Channels arcane energy before releasing a musical projectile.
+</Accordion>
+
+<Accordion title="Projectile properties">
+  **Velocity:** 1.2  
+  **Pierce:** 3 targets  
+  **Homing:** None (0° angle)  
+  **Hitbox:** 1.8 × 1.8  
+  **Light Level:** 12  
+  **Model:** `bards_rpg:projectile/magical_ballad`  
+  **Model Scale:** 2.0  
+  **Light Emission:** Radiate
+  
+  The projectile is a large, glowing magical model that pierces through up to 3 enemies.
+</Accordion>
+
+<Accordion title="Effects">
+  **Damage Impact:**
+  - Base damage: **0.75**
+  - Attribute multiplier: **1.0**
+  - School: Arcane
+  - Particles: Arcane spark burst
+  
+  **Buff Impact:**
+  - Effect: Ballad
+  - Base duration: **8 seconds**
+  - Base amplifier: **1**
+  - Max stacks: **3**
+  - School: Healing
+  - Amplifier cap scales with spell power (0.15× multiplier)
+  - Increases Attack Damage by **2.5% per stack** (multiplicative)
+  - Increases Spell Power by **2.5% per stack** (multiplicative)
+  
+  At maximum stacks, allies gain **7.5% increased Attack Damage and Spell Power**.
+</Accordion>
+
+<Tip>
+Magical Ballad's pierce capability makes it excellent against grouped enemies. Hit multiple foes to buff all nearby allies simultaneously.
+</Tip>
+
+### Encore
+
+<Accordion title="Spell overview">
+  **Tier:** 3  
+  **School:** Arcane  
+  **Range:** 12 blocks  
+  **Target Type:** Area (includes caster)  
+  **Cooldown:** 10 seconds  
+  **Exhaust Cost:** 20%
+  
+  A powerful area-of-effect spell that deals damage to nearby enemies and reduces active spell cooldowns for allies.
+</Accordion>
+
+<Accordion title="Casting details">
+  **Cast Duration:** 0.5 seconds  
+  **Movement Speed:** 150% during cast  
+  **Vertical Range Multiplier:** 0.5×
+  
+  A quick-cast spell with an instant release, creating a burst of cyan musical energy.
+</Accordion>
+
+<Accordion title="Effects">
+  **Damage Impact:**
+  - Base damage: **0.6**
+  - Attribute multiplier: **0.5**
+  - School: Arcane
+  - Particles: Large cyan spark burst (30 particles)
+  
+  **Cooldown Reduction:**
+  - Affects: Active spells
+  - Duration multiplier: **0.8** (reduces remaining cooldown by 20%)
+  - Does not affect passive or channeled abilities
+  
+  This unique effect helps allies recover their powerful abilities faster during intense battles.
+</Accordion>
+
+<Tip>
+Encore is perfect for extended fights. Use it to help your team cycle through their abilities faster while dealing area damage.
+</Tip>
+
+### Army's Paeon
+
+<Accordion title="Spell overview">
+  **Tier:** 4  
+  **School:** Arcane (trigger), Healing (buff)  
+  **Range:** 5 blocks (initial buff area)  
+  **Target Type:** Area (includes caster)  
+  **Cooldown:** 10 seconds  
+  **Exhaust Cost:** 20%
+  
+  The most complex Bard spell. Buff nearby allies with a stash effect that triggers additional buffs when you damage enemies.
+</Accordion>
+
+<Accordion title="Casting details">
+  **Release Animation:** Lute release  
+  **Particles:** Golden musical notes
+  
+  Creates a golden area circle effect that follows buffed allies.
+</Accordion>
+
+<Accordion title="Stash effect mechanics">
+  Army's Paeon applies a stash effect that listens for damage triggers:
+  
+  **Trigger Conditions:**
+  - Melee attacks hitting enemies
+  - Arrows hitting enemies
+  - Damaging spells hitting enemies (Active type only)
+  
+  **Consume Amount:** 0 (stash is not consumed on trigger)
+  
+  When you hit an enemy while buffed, all nearby allies receive the Army's Motivation buff.
+</Accordion>
+
+<Accordion title="Effects">
+  **Initial Buff (Army's Paeon Stash):**
+  - Effect: Army's Paeon
+  - Base duration: **8 seconds**
+  - Base amplifier: **1**
+  - Max stacks: **3**
+  - School: Healing
+  - Amplifier cap scales with spell power (0.15× multiplier)
+  
+  **Triggered Buff (Army's Motivation):**
+  - Triggered on each melee hit, arrow hit, or damaging spell
+  - Cooldown between triggers: **1 second**
+  - Affects all allies within the stash effect area
+  - Deals magic damage scaling with the highest attribute
+  - Damage scales with effect amplifier
+  - Creates golden particle burst on trigger
+</Accordion>
+
+<Note>
+Army's Paeon has two components: the initial stash effect that lasts 8 seconds, and the motivation buff that triggers each time you damage an enemy during that window.
+</Note>
+
+<Tip>
+Use Army's Paeon before engaging in combat, then aggressively attack enemies to continuously buff your allies. The more you attack, the more value your team gets!
+</Tip>
+
+## Spell comparison
+
+| Spell | Tier | Range | Type | Base Damage | Primary Effect |
+|-------|------|-------|------|-------------|----------------|
+| Troubadour's Minuet | 1 | 5 | Area | 0.5 | Damage reduction (-5% per stack) |
+| Magical Ballad | 2 | 20 | Projectile | 0.75 | Attack/Spell Power (+2.5% per stack) |
+| Encore | 3 | 12 | Area | 0.6 | Cooldown reduction (20%) |
+| Army's Paeon | 4 | 5 | Area + Trigger | Variable | Damage on ally attacks |
+
+## Spell synergies
+
+<Steps>
+  <Step title="Pre-combat setup">
+    Cast **Army's Paeon** on your team before engaging to set up the damage-triggered buffs.
+  </Step>
+  
+  <Step title="Opening engage">
+    Use **Troubadour's Minuet** to damage enemies and gain defensive stacks immediately.
+  </Step>
+  
+  <Step title="Sustained damage">
+    Fire **Magical Ballad** projectiles at grouped enemies to build offensive stacks while dealing piercing damage.
+  </Step>
+  
+  <Step title="Ability reset">
+    Use **Encore** to reduce cooldowns and prepare for another rotation while dealing area damage.
+  </Step>
+</Steps>
+
+<Tip>
+All Bard spells have the same cooldown (10 seconds) and exhaust cost (20%), allowing you to cast them in any order without worrying about resource management.
+</Tip>

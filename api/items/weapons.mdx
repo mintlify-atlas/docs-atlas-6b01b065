@@ -1,0 +1,331 @@
+---
+title: Weapons
+description: API documentation for the Weapons class in Bards RPG
+---
+
+The `Weapons` class manages all weapon registration for the Bards RPG mod, including rapiers, lutes, and lyres. It provides methods to create weapon entries with custom materials, damage values, and spell power attributes.
+
+## Overview
+
+The Weapons class defines three main weapon types:
+- **Rapiers**: Fast melee weapons with sword-type functionality
+- **Lutes**: Damage-focused staff weapons with arcane and healing power
+- **Lyres**: Healing-focused staff weapons with enhanced healing power
+
+## Methods
+
+### register()
+
+Registers all weapon entries with the Minecraft registry system.
+
+<ParamField path="configs" type="Map<String, WeaponConfig>">
+  Configuration map containing weapon statistics and properties
+</ParamField>
+
+```java
+public static void register(Map<String, WeaponConfig> configs)
+```
+
+#### Example usage
+
+```java
+import com.bards.item.Weapons;
+import net.spell_engine.api.config.WeaponConfig;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ModInitializer {
+    public void onInitialize() {
+        Map<String, WeaponConfig> configs = new HashMap<>();
+        Weapons.register(configs);
+    }
+}
+```
+
+### entry()
+
+Creates a new weapon entry with specified properties.
+
+<ParamField path="name" type="String" required>
+  The registry name of the weapon
+</ParamField>
+
+<ParamField path="material" type="Weapon.CustomMaterial" required>
+  The material properties including durability and repair ingredient
+</ParamField>
+
+<ParamField path="factory" type="Weapon.Factory" required>
+  Factory function to create the weapon item instance
+</ParamField>
+
+<ParamField path="defaults" type="WeaponConfig" required>
+  Default configuration including damage and attack speed
+</ParamField>
+
+<ParamField path="category" type="Equipment.WeaponType" required>
+  The weapon type category (SWORD, DAMAGE_STAFF, HEALING_STAFF)
+</ParamField>
+
+<ResponseField name="entry" type="Weapon.Entry">
+  Returns a configured weapon entry that can be further customized
+</ResponseField>
+
+```java
+private static Weapon.Entry entry(
+    String name,
+    Weapon.CustomMaterial material,
+    Weapon.Factory factory,
+    WeaponConfig defaults,
+    Equipment.WeaponType category
+)
+```
+
+## Weapon creation helpers
+
+### rapier()
+
+Creates a rapier weapon entry with -2.0 attack speed.
+
+<ParamField path="name" type="String" required>
+  The registry name of the rapier
+</ParamField>
+
+<ParamField path="material" type="Weapon.CustomMaterial" required>
+  The material properties for the rapier
+</ParamField>
+
+<ParamField path="damage" type="float" required>
+  The base attack damage value
+</ParamField>
+
+<ResponseField name="entry" type="Weapon.Entry">
+  Returns a rapier weapon entry
+</ResponseField>
+
+```java
+private static Weapon.Entry rapier(String name, Weapon.CustomMaterial material, float damage)
+```
+
+#### Example rapier entries
+
+```java
+// Iron Rapier with 3.6 damage
+public static final Weapon.Entry iron_rapier = rapier("iron_rapier",
+    Weapon.CustomMaterial.matching(ToolMaterials.IRON, () -> Ingredient.ofItems(Items.IRON_INGOT)),
+    3.6F)
+    .translatedName("Iron Rapier")
+    .loot(Equipment.LootProperties.of(1));
+
+// Diamond Rapier with 4.4 damage
+public static final Weapon.Entry diamond_rapier = rapier("diamond_rapier",
+    Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(Items.DIAMOND)),
+    4.4F)
+    .translatedName("Diamond Rapier")
+    .loot(Equipment.LootProperties.of(2));
+
+// Netherite Rapier with 5.9 damage
+public static final Weapon.Entry netherite_rapier = rapier("netherite_rapier",
+    Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, () -> Ingredient.ofItems(Items.NETHERITE_INGOT)),
+    5.9F)
+    .translatedName("Netherite Rapier")
+    .loot(Equipment.LootProperties.of(3));
+```
+
+### lute()
+
+Creates a lute weapon entry with -3.0 attack speed.
+
+<ParamField path="name" type="String" required>
+  The registry name of the lute
+</ParamField>
+
+<ParamField path="material" type="Weapon.CustomMaterial" required>
+  The material properties for the lute
+</ParamField>
+
+<ParamField path="damage" type="float" required>
+  The base attack damage value
+</ParamField>
+
+<ResponseField name="entry" type="Weapon.Entry">
+  Returns a lute weapon entry configured as a damage staff
+</ResponseField>
+
+```java
+private static Weapon.Entry lute(String name, Weapon.CustomMaterial material, float damage)
+```
+
+#### Example lute entries
+
+```java
+// Wooden Lute with 4.0 damage and T1 spell power
+public static final Weapon.Entry wooden_lute = lute("wooden_lute",
+    Weapon.CustomMaterial.matching(ToolMaterials.IRON, () -> Ingredient.ofItems(Items.IRON_INGOT)),
+    4.0F)
+    .translatedName("Wooden Lute")
+    .attribute(AttributeModifier.bonus(SpellSchools.ARCANE.id, 3.5F))
+    .attribute(AttributeModifier.bonus(SpellSchools.HEALING.id, 3.5F))
+    .loot(Equipment.LootProperties.of(1));
+
+// Diamond Lute with 6.0 damage and T2 spell power
+public static final Weapon.Entry diamond_lute = lute("diamond_lute",
+    Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(Items.DIAMOND)),
+    6.0F)
+    .translatedName("Diamond Lute")
+    .attribute(AttributeModifier.bonus(SpellSchools.ARCANE.id, 4.0F))
+    .attribute(AttributeModifier.bonus(SpellSchools.HEALING.id, 4.0F))
+    .loot(Equipment.LootProperties.of(2));
+```
+
+### lyre()
+
+Creates a lyre weapon entry with -2.2 attack speed and 3.0 base damage.
+
+<ParamField path="name" type="String" required>
+  The registry name of the lyre
+</ParamField>
+
+<ParamField path="material" type="Weapon.CustomMaterial" required>
+  The material properties for the lyre
+</ParamField>
+
+<ResponseField name="entry" type="Weapon.Entry">
+  Returns a lyre weapon entry configured as a healing staff
+</ResponseField>
+
+```java
+private static Weapon.Entry lyre(String name, Weapon.CustomMaterial material)
+```
+
+#### Example lyre entries
+
+```java
+// Golden Lyre with healing-focused attributes
+public static final Weapon.Entry golden_lyre = lyre("golden_lyre",
+    Weapon.CustomMaterial.matching(ToolMaterials.IRON, () -> Ingredient.ofItems(Items.GOLD_INGOT)))
+    .translatedName("Golden Lyre")
+    .attribute(AttributeModifier.bonus(SpellSchools.ARCANE.id, 1.8F))
+    .attribute(AttributeModifier.bonus(SpellSchools.HEALING.id, 5.3F))
+    .loot(Equipment.LootProperties.of("golden"));
+
+// Diamond Lyre with enhanced healing power
+public static final Weapon.Entry diamond_lyre = lyre("diamond_lyre",
+    Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND, () -> Ingredient.ofItems(Items.DIAMOND)))
+    .translatedName("Diamond Lyre")
+    .attribute(AttributeModifier.bonus(SpellSchools.ARCANE.id, 2.0F))
+    .attribute(AttributeModifier.bonus(SpellSchools.HEALING.id, 6.0F))
+    .loot(Equipment.LootProperties.of(2));
+```
+
+## Material system
+
+Weapons use the `Weapon.CustomMaterial` system to define durability and repair ingredients.
+
+### Creating custom materials
+
+```java
+// Match vanilla tool material with custom repair ingredient
+Weapon.CustomMaterial.matching(
+    ToolMaterials.DIAMOND,
+    () -> Ingredient.ofItems(Items.DIAMOND)
+)
+
+// Create material for modded items
+private static Supplier<Ingredient> ingredient(String idString, boolean requirement, Item fallback) {
+    var id = Identifier.of(idString);
+    if (requirement) {
+        return () -> Ingredient.ofItems(fallback);
+    } else {
+        return () -> {
+            var item = Registries.ITEM.get(id);
+            var ingredient = item != null ? item : fallback;
+            return Ingredient.ofItems(ingredient);
+        };
+    }
+}
+```
+
+## Weapon properties
+
+### Attack speeds
+
+<ResponseField name="rapier_attack_speed" type="float" default="-2.0F">
+  Attack speed modifier for rapiers
+</ResponseField>
+
+<ResponseField name="lute_attack_speed" type="float" default="-3.0F">
+  Attack speed modifier for lutes
+</ResponseField>
+
+<ResponseField name="lyre_attack_speed" type="float" default="-2.2F">
+  Attack speed modifier for lyres
+</ResponseField>
+
+### Spell power tiers
+
+<ResponseField name="T1_LUTE_POWER" type="float" default="3.5F">
+  Tier 1 spell power bonus for lutes
+</ResponseField>
+
+<ResponseField name="T2_LUTE_POWER" type="float" default="4.0F">
+  Tier 2 spell power bonus for lutes
+</ResponseField>
+
+<ResponseField name="T3_LUTE_POWER" type="float" default="4.5F">
+  Tier 3 spell power bonus for lutes
+</ResponseField>
+
+<ResponseField name="T4_LUTE_POWER" type="float" default="5.0F">
+  Tier 4 spell power bonus for lutes (modded items)
+</ResponseField>
+
+## Data structures
+
+### Weapon entries collection
+
+<ResponseField name="entries" type="ArrayList<Weapon.Entry>">
+  Collection of all registered weapon entries. This list is populated during initialization and used for registration.
+</ResponseField>
+
+```java
+public static final ArrayList<Weapon.Entry> entries = new ArrayList<>();
+```
+
+## Advanced features
+
+### Conditional registration
+
+Weapons can be conditionally registered based on mod availability:
+
+```java
+// Register Better Nether weapons only if mod is loaded
+if (BardsMod.tweaksConfig.value.ignore_items_required_mods || 
+    FabricLoader.getInstance().isModLoaded("betternether")) {
+    
+    var repair = ingredient("betternether:nether_ruby", 
+        FabricLoader.getInstance().isModLoaded("betternether"), 
+        Items.NETHERITE_INGOT);
+    
+    rapier("ruby_rapier", 
+        Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, repair), 
+        6.7F)
+        .translatedName("Ruby Rapier")
+        .loot(Equipment.LootProperties.of(4));
+}
+```
+
+### Adding custom spells
+
+Weapons can have custom spells attached:
+
+```java
+rapier("ender_dragon_rapier", 
+    Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, 
+        () -> Ingredient.ofItems(Items.AMETHYST_SHARD)), 
+    6.7F)
+    .translatedName("Dragon's Rapier")
+    .spell(Identifier.of("arsenal:radiance_melee"))
+    .loot(Equipment.LootProperties.of(5))
+    .rarity = Rarity.RARE;
+```

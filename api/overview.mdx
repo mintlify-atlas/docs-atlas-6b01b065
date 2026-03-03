@@ -1,0 +1,72 @@
+---
+title: Core API overview
+description: Overview of the Bards RPG mod core API architecture and initialization
+---
+
+## Overview
+
+The Bards RPG mod core API provides the foundational systems for the mod, including initialization, registration, and configuration management. The API is built around the `BardsMod` class, which serves as the entry point for all mod functionality.
+
+## Architecture
+
+The core API follows a structured initialization pattern:
+
+1. **Configuration loading** - All config managers are refreshed
+2. **Custom content registration** - Custom spell impacts and effects are registered
+3. **Item registration** - Items, armor, and weapons are registered
+4. **Effect registration** - Status effects are registered and saved
+
+## Key components
+
+### Main class
+
+The `BardsMod` class (located at `BardsMod.java:22`) is the central hub for mod initialization and provides:
+
+- Static configuration managers for items, effects, villages, and tweaks
+- Initialization methods for setting up the mod
+- Registration methods for items and effects
+- Utility methods like `id()` for creating identifiers
+
+### Configuration managers
+
+Four configuration managers handle different aspects of the mod:
+
+- `itemConfig` - Equipment and item configurations
+- `effectsConfig` - Status effect configurations
+- `villageConfig` - Village structure pool configurations
+- `tweaksConfig` - Development and compatibility tweaks
+
+All configuration managers use the `ConfigManager` class from the `tiny_config` library and are configured with:
+- Automatic sanitization
+- Mod-specific directory (`bards_rpg`)
+- Default values
+
+### Registration systems
+
+The mod uses a registration system pattern where:
+
+- Items are registered through `Armors.register()`, `Weapons.register()`, and `BardBooks.register()`
+- Effects are registered through `BardsEffects.register()`
+- Item groups are created and registered to the Minecraft registry
+- Custom spell impacts are registered through `CustomSpellImpacts.registerCustomImpacts()`
+
+## Initialization flow
+
+```java
+// 1. Initialize configurations and core systems
+BardsMod.init();
+
+// 2. Register items, armor, weapons, and spell books
+BardsMod.registerItems();
+
+// 3. Register status effects
+BardsMod.registerEffects();
+```
+
+## Module ID
+
+The mod uses the identifier `"bards_rpg"` (defined at `BardsMod.java:23`) for all registry entries and resource locations.
+
+## Development mode
+
+When running in a development environment, the mod automatically enables `ignore_items_required_mods` in the tweaks config to allow testing items that depend on other mods without requiring those mods to be present.

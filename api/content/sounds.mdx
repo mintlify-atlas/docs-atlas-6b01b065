@@ -1,0 +1,304 @@
+---
+title: Sounds
+description: API documentation for the BardsSounds class which manages sound event registration and playback
+---
+
+## Overview
+
+The `BardsSounds` class provides a registry system for sound events in the Bards RPG mod. It handles sound event registration, variant management, and provides utility methods for playing sounds in the world.
+
+## Entry structure
+
+Sound entries are managed through the nested `Entry` class:
+
+```java
+public static final class Entry {
+    private final Identifier id;
+    private final SoundEvent soundEvent;
+    private RegistryEntry<SoundEvent> entry;
+    private int variants = 1;
+}
+```
+
+<ResponseField name="id" type="Identifier">
+  Unique identifier for the sound in the format `bards_rpg:sound_name`
+</ResponseField>
+
+<ResponseField name="soundEvent" type="SoundEvent">
+  Minecraft sound event instance
+</ResponseField>
+
+<ResponseField name="entry" type="RegistryEntry<SoundEvent>">
+  Registry entry set after registration
+</ResponseField>
+
+<ResponseField name="variants" type="int" default="1">
+  Number of sound variants available for randomization
+</ResponseField>
+
+## Constructors
+
+### Basic constructor
+
+```java
+public Entry(Identifier id, SoundEvent soundEvent)
+```
+
+Creates an entry with a specific identifier and sound event.
+
+<ParamField path="id" type="Identifier" required>
+  The sound identifier
+</ParamField>
+
+<ParamField path="soundEvent" type="SoundEvent" required>
+  Pre-configured sound event instance
+</ParamField>
+
+### Name-based constructor
+
+```java
+public Entry(String name)
+```
+
+Creates an entry from a name string, automatically prefixing with the mod ID.
+
+<ParamField path="name" type="String" required>
+  Sound name (e.g., "lute_strum") - will become `bards_rpg:lute_strum`
+</ParamField>
+
+### Identifier-based constructor
+
+```java
+public Entry(Identifier id)
+```
+
+Creates an entry with default sound event settings.
+
+<ParamField path="id" type="Identifier" required>
+  Complete sound identifier
+</ParamField>
+
+## Builder methods
+
+### travelDistance
+
+```java
+public Entry travelDistance(float distance)
+```
+
+Sets the maximum distance the sound can travel before attenuating.
+
+<ParamField path="distance" type="float" required>
+  Travel distance in blocks
+</ParamField>
+
+<ResponseField name="return" type="Entry">
+  New Entry instance with updated travel distance
+</ResponseField>
+
+**Example:**
+```java
+public static final Entry distant_horn = add(
+    new Entry("horn_blast").travelDistance(64.0f)
+);
+```
+
+### variants
+
+```java
+public Entry variants(int variants)
+```
+
+Specifies the number of sound variants for randomization.
+
+<ParamField path="variants" type="int" required>
+  Number of variants (corresponds to sound files with _1, _2, etc. suffixes)
+</ParamField>
+
+<ResponseField name="return" type="Entry">
+  This Entry instance for method chaining
+</ResponseField>
+
+**Example:**
+```java
+public static final Entry lute_note = add(
+    new Entry("lute_note").variants(3)
+);
+// Expects: lute_note_1.ogg, lute_note_2.ogg, lute_note_3.ogg
+```
+
+## Accessor methods
+
+### id()
+
+```java
+public Identifier id()
+```
+
+Returns the sound identifier.
+
+### soundEvent()
+
+```java
+public SoundEvent soundEvent()
+```
+
+Returns the sound event instance.
+
+### entry()
+
+```java
+public RegistryEntry<SoundEvent> entry()
+```
+
+Returns the registry entry (available after registration).
+
+### variants()
+
+```java
+public int variants()
+```
+
+Returns the number of sound variants.
+
+## Registration
+
+### register()
+
+```java
+public static void register()
+```
+
+Registers all sound entries with the Minecraft sound registry. This method should be called during mod initialization.
+
+```java
+// During mod initialization
+BardsSounds.register();
+```
+
+## Playback utilities
+
+### playSoundEvent (basic)
+
+```java
+public static void playSoundEvent(World world, Entity entity, SoundEvent soundEvent)
+```
+
+Plays a sound at an entity's location with default volume and pitch.
+
+<ParamField path="world" type="World" required>
+  The world to play the sound in
+</ParamField>
+
+<ParamField path="entity" type="Entity" required>
+  Entity at whose position the sound should play
+</ParamField>
+
+<ParamField path="soundEvent" type="SoundEvent" required>
+  The sound event to play
+</ParamField>
+
+### playSoundEvent (advanced)
+
+```java
+public static void playSoundEvent(World world, Entity entity, SoundEvent soundEvent, float volume, float pitch)
+```
+
+Plays a sound with custom volume and pitch.
+
+<ParamField path="world" type="World" required>
+  The world to play the sound in
+</ParamField>
+
+<ParamField path="entity" type="Entity" required>
+  Entity at whose position the sound should play
+</ParamField>
+
+<ParamField path="soundEvent" type="SoundEvent" required>
+  The sound event to play
+</ParamField>
+
+<ParamField path="volume" type="float" required>
+  Volume level (1.0 = normal, higher = louder)
+</ParamField>
+
+<ParamField path="pitch" type="float" required>
+  Pitch level (1.0 = normal, higher = higher pitch)
+</ParamField>
+
+## Usage example
+
+```java
+import com.bards.content.BardsSounds;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+
+public class SoundExample {
+    
+    // Define a new sound
+    public static final BardsSounds.Entry LUTE_STRUM = BardsSounds.add(
+        new BardsSounds.Entry("lute_strum")
+            .travelDistance(32.0f)
+            .variants(3)
+    );
+    
+    // Play the sound
+    public void playLuteSound(World world, PlayerEntity player) {
+        BardsSounds.playSoundEvent(
+            world,
+            player,
+            LUTE_STRUM.soundEvent(),
+            1.0f,  // normal volume
+            1.0f   // normal pitch
+        );
+    }
+    
+    // Play with variation
+    public void playHighPitchedLute(World world, PlayerEntity player) {
+        BardsSounds.playSoundEvent(
+            world,
+            player,
+            LUTE_STRUM.soundEvent(),
+            0.8f,  // slightly quieter
+            1.5f   // higher pitch
+        );
+    }
+}
+```
+
+## Sound file structure
+
+When defining sound entries, ensure corresponding sound files exist in your resource pack:
+
+```
+resources/
+  assets/
+    bards_rpg/
+      sounds/
+        lute_strum_1.ogg
+        lute_strum_2.ogg
+        lute_strum_3.ogg
+      sounds.json
+```
+
+And register them in `sounds.json`:
+
+```json
+{
+  "lute_strum": {
+    "sounds": [
+      "bards_rpg:lute_strum_1",
+      "bards_rpg:lute_strum_2",
+      "bards_rpg:lute_strum_3"
+    ],
+    "subtitle": "Lute strums"
+  }
+}
+```
+
+## Notes
+
+- The class currently has no registered sounds (the `test` entry is commented out)
+- All sounds are played in the `PLAYERS` sound category
+- Sound playback uses `world.playSound()` which is server-side and syncs to clients automatically
+- The `playSoundEvent` methods pass `null` as the player parameter to ensure all nearby players hear the sound

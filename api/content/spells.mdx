@@ -1,0 +1,204 @@
+---
+title: Spells
+description: API documentation for the BardsSpells class which manages spell registrations and configurations for the Bards RPG mod
+---
+
+## Overview
+
+The `BardsSpells` class is responsible for registering and configuring all spells available in the Bards RPG mod. Each spell is defined as an `Entry` containing metadata, spell configuration, and optional tooltip customization.
+
+## Entry structure
+
+Spells are registered using the `Entry` record class:
+
+```java
+public record Entry(Identifier id, Spell spell, String title, String description,
+                    @Nullable SpellTooltip.DescriptionMutator mutator) { }
+```
+
+<ParamField path="id" type="Identifier" required>
+  Unique identifier for the spell in the format `bards_rpg:spell_name`
+</ParamField>
+
+<ParamField path="spell" type="Spell" required>
+  The spell configuration object containing all mechanics, targeting, delivery, and impact data
+</ParamField>
+
+<ParamField path="title" type="String" required>
+  Display name of the spell shown to players
+</ParamField>
+
+<ParamField path="description" type="String" required>
+  Template description supporting placeholders like `{damage}`, `{bonus}`, `{amplifier_cap}`, etc.
+</ParamField>
+
+<ParamField path="mutator" type="SpellTooltip.DescriptionMutator">
+  Optional function to dynamically replace placeholder values in the description
+</ParamField>
+
+## Registered spells
+
+### Troubadour's Minuet
+
+**ID:** `bards_rpg:troubadours_minuet`
+
+Song that deals damage to enemies and reduces incoming damage, with stackable buff.
+
+<ParamField path="school" type="SpellSchools">ARCANE</ParamField>
+<ParamField path="range" type="int">5</ParamField>
+<ParamField path="tier" type="int">1</ParamField>
+<ParamField path="cast.duration" type="float">5.0</ParamField>
+<ParamField path="cast.movement_speed" type="float">1.5</ParamField>
+<ParamField path="cast.channel_ticks" type="int">10</ParamField>
+<ParamField path="cast.animation" type="String">bards_rpg:lute_channel</ParamField>
+<ParamField path="target.type" type="Spell.Target.Type">AREA</ParamField>
+<ParamField path="target.area.vertical_range_multiplier" type="float">1.5</ParamField>
+<ParamField path="target.area.include_caster" type="boolean">true</ParamField>
+<ParamField path="exhaust" type="float">0.2</ParamField>
+<ParamField path="cooldown" type="int">10 seconds</ParamField>
+
+**Impacts:**
+- Damage: 0.5x spell power
+- Status effect: TROUBADOURS_MINUET (10 seconds duration, stackable up to 3 times)
+
+### Magical Ballad
+
+**ID:** `bards_rpg:magical_ballad`
+
+Launches magical ballads that pierce through targets, dealing damage and buffing allies.
+
+<ParamField path="school" type="SpellSchools">ARCANE</ParamField>
+<ParamField path="range" type="int">20</ParamField>
+<ParamField path="tier" type="int">2</ParamField>
+<ParamField path="cast.duration" type="float">4.0</ParamField>
+<ParamField path="cast.movement_speed" type="float">1.5</ParamField>
+<ParamField path="cast.channel_ticks" type="int">20</ParamField>
+<ParamField path="cast.animation" type="String">bards_rpg:lute_channel</ParamField>
+<ParamField path="target.type" type="Spell.Target.Type">AIM</ParamField>
+<ParamField path="deliver.type" type="Spell.Delivery.Type">PROJECTILE</ParamField>
+<ParamField path="projectile.launch_properties.velocity" type="float">1.2</ParamField>
+<ParamField path="projectile.perks.pierce" type="int">3 targets</ParamField>
+<ParamField path="projectile.client_data.light_level" type="int">12</ParamField>
+<ParamField path="projectile.client_data.model.model_id" type="String">bards_rpg:projectile/magical_ballad</ParamField>
+<ParamField path="projectile.client_data.model.scale" type="float">2.0</ParamField>
+<ParamField path="projectile.hitbox" type="HitBox">1.8 x 1.8</ParamField>
+<ParamField path="exhaust" type="float">0.2</ParamField>
+<ParamField path="cooldown" type="int">10 seconds</ParamField>
+
+**Impacts:**
+- Damage: 0.75x base + 1.0x spell power
+- Status effect: BALLAD (8 seconds duration, stackable up to 3 times)
+
+### Encore
+
+**ID:** `bards_rpg:encore`
+
+Deals damage to nearby targets and reduces active spell cooldowns for allies.
+
+<ParamField path="school" type="SpellSchools">ARCANE</ParamField>
+<ParamField path="range" type="int">12</ParamField>
+<ParamField path="tier" type="int">3</ParamField>
+<ParamField path="cast.duration" type="float">0.5</ParamField>
+<ParamField path="cast.movement_speed" type="float">1.5</ParamField>
+<ParamField path="cast.animation" type="String">bards_rpg:lute_channel</ParamField>
+<ParamField path="release.animation" type="String">bards_rpg:lute_release</ParamField>
+<ParamField path="target.type" type="Spell.Target.Type">AREA</ParamField>
+<ParamField path="target.area.vertical_range_multiplier" type="float">0.5</ParamField>
+<ParamField path="target.area.include_caster" type="boolean">true</ParamField>
+<ParamField path="exhaust" type="float">0.2</ParamField>
+<ParamField path="cooldown" type="int">10 seconds</ParamField>
+
+**Impacts:**
+- Damage: 0.6x base + 0.5x spell power
+- Cooldown reduction: 80% of remaining duration (20% reduction)
+
+### Army's Paeon
+
+**ID:** `bards_rpg:armys_paeon`
+
+Buffs nearby allies, enhancing their strength when you damage enemies. Effect is stackable.
+
+<ParamField path="school" type="SpellSchools">ARCANE</ParamField>
+<ParamField path="range" type="int">5</ParamField>
+<ParamField path="tier" type="int">4</ParamField>
+<ParamField path="release.animation" type="String">bards_rpg:lute_release</ParamField>
+<ParamField path="deliver.type" type="Spell.Delivery.Type">STASH_EFFECT</ParamField>
+<ParamField path="deliver.stash_effect.id" type="String">bards_rpg:armys_paeon</ParamField>
+<ParamField path="deliver.stash_effect.consume" type="int">0 (infinite triggers)</ParamField>
+<ParamField path="exhaust" type="float">0.2</ParamField>
+<ParamField path="cooldown" type="int">10 seconds</ParamField>
+
+**Triggers:**
+- MELEE_IMPACT
+- ARROW_IMPACT
+- SPELL_IMPACT_SPECIFIC (active damage spells only)
+
+**Impacts:**
+- Status effect: ARMYS_PAEON (8 seconds duration, stackable up to 3 times)
+
+### Army's Paeon Impact
+
+**ID:** `bards_rpg:armys_paeon_impact`
+
+Internal spell triggered by Army's Paeon stash effect.
+
+<ParamField path="school" type="SpellSchools">ARCANE</ParamField>
+<ParamField path="range" type="int">0</ParamField>
+<ParamField path="tier" type="int">1</ParamField>
+<ParamField path="deliver.type" type="Spell.Delivery.Type">STASH_EFFECT</ParamField>
+<ParamField path="cooldown" type="int">1 second</ParamField>
+
+**Impacts:**
+- Custom handler: `bards_rpg:armies_paeon_impact`
+
+## Utility functions
+
+### Trigger helpers
+
+```java
+public static Spell.Trigger armiesPaeonMelee()
+public static Spell.Trigger armiesPaeonRanged()
+public static Spell.Trigger armiesPaeonSpell()
+```
+
+These functions create specialized triggers for Army's Paeon that redirect target and AoE source to the caster.
+
+### Particle helpers
+
+```java
+private static ParticleBatch musicParticles(Integer particleCount)
+private static ParticleBatch musicImpactParticles(Integer particleCount)
+```
+
+Create music note particle effects for spell casting and impacts.
+
+## Color constants
+
+<ResponseField name="GOLD" type="Color">
+  `0xffd700` - Used for Army's Paeon
+</ResponseField>
+
+<ResponseField name="CYAN" type="Color">
+  `0x00ffff` - Used for Encore
+</ResponseField>
+
+<ResponseField name="BRIGHT_GREEN" type="Color">
+  `0x8efea1` - Used for Troubadour's Minuet
+</ResponseField>
+
+## Usage example
+
+```java
+import com.bards.content.BardsSpells;
+
+// Access a registered spell
+var minuet = BardsSpells.troubadours_minuet;
+Identifier spellId = minuet.id();
+Spell spellConfig = minuet.spell();
+String displayName = minuet.title();
+
+// Iterate all registered spells
+for (var entry : BardsSpells.entries) {
+    System.out.println(entry.title() + ": " + entry.description());
+}
+```

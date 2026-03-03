@@ -1,0 +1,274 @@
+---
+title: Registration systems
+description: Documentation for item, effect, and content registration systems
+---
+
+## Overview
+
+The Bards RPG mod uses a structured registration system for items, effects, armor, weapons, and other content. Registration is handled through dedicated classes that create registry entries and apply configurations.
+
+## Item registration
+
+### Spell books
+
+Spell books are registered through the `BardBooks` class, which creates and registers spell book items.
+
+**Location:** `com/bards/item/BardBooks.java:11`
+
+```java
+public static void register() {
+    var books = List.of("bard");
+    for (var name: books) {
+        SpellBooks.createAndRegister(Identifier.of(MOD_ID, name), Group.KEY);
+    }
+}
+```
+
+**Books registered:**
+- `bards_rpg:bard` - The main bard spell book
+
+### Armor sets
+
+Armor registration is handled by the `Armors` class, which defines armor materials, pieces, and configurations.
+
+**Location:** `com/bards/item/Armors.java:200`
+
+```java
+public static void register(Map<String, ArmorSetConfig> configs) {
+    if (FabricLoader.getInstance().isModLoaded("armory_rpgs") || BardsMod.tweaksConfig.value.ignore_items_required_mods) {
+        storytellerArmorSet = create(
+                storytellers_garb,
+                Identifier.of(MOD_ID, "storyteller_garb"),
+                40,
+                5,
+                Armor.CustomItem::new,
+                ArmorSetConfig.with(
+                        new ArmorSetConfig.Piece(storytellers_garb.value().getProtection(ArmorItem.Type.HELMET))
+                                .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, bard_spell_power_t5))
+                                .add(AttributeModifier.multiply(SpellSchools.HEALING.id, bard_spell_power_t5))
+                                .add(movementSpeed(bard_speed_T5)),
+                        // ... other pieces
+                ),
+                commonSettings(null))
+                .translatedName("Storyteller Hat", "Storyteller Tunic", "Storyteller Trousers", "Storyteller Boots");
+    }
+    Armor.register(configs, entries, Group.KEY);
+}
+```
+
+**Armor sets registered:**
+
+<AccordionGroup>
+  <Accordion title="Entertainer Garb (Tier 1)">
+    - **Durability multiplier:** 10
+    - **Protection:** 1/3/2/1 (head/chest/legs/feet)
+    - **Enchantability:** 9
+    - **Attributes per piece:**
+      - +15% Arcane spell power
+      - +15% Healing spell power
+      - +3% Movement speed
+  </Accordion>
+
+  <Accordion title="Troubadour Garb (Tier 2)">
+    - **Durability multiplier:** 20
+    - **Protection:** 1/3/2/1
+    - **Enchantability:** 10
+    - **Attributes per piece:**
+      - +20% Arcane spell power
+      - +20% Healing spell power
+      - +4% Movement speed
+  </Accordion>
+
+  <Accordion title="Netherite Troubadour Garb (Tier 3)">
+    - **Durability multiplier:** 30
+    - **Protection:** 1/3/2/1
+    - **Enchantability:** 15
+    - **Attributes per piece:**
+      - +25% Arcane spell power
+      - +25% Healing spell power
+      - +5% Movement speed
+    - **Repair ingredient:** Netherite ingot
+  </Accordion>
+
+  <Accordion title="Storyteller Garb (Tier 5)">
+    - **Durability multiplier:** 40
+    - **Protection:** 1/3/2/1
+    - **Enchantability:** 18
+    - **Attributes per piece:**
+      - +30% Arcane spell power
+      - +30% Healing spell power
+      - +6% Movement speed
+    - **Repair ingredient:** Netherite ingot
+    - **Requirement:** Requires `armory_rpgs` mod or development mode
+  </Accordion>
+</AccordionGroup>
+
+### Weapons
+
+Weapon registration is handled by the `Weapons` class, which defines three weapon types: rapiers, lutes, and lyres.
+
+**Location:** `com/bards/item/Weapons.java:147`
+
+```java
+public static void register(Map<String, WeaponConfig> configs) {
+    if (BardsMod.tweaksConfig.value.ignore_items_required_mods || FabricLoader.getInstance().isModLoaded(BETTER_NETHER)) {
+        var repair = ingredient("betternether:nether_ruby", FabricLoader.getInstance().isModLoaded(BETTER_NETHER), Items.NETHERITE_INGOT);
+        rapier("ruby_rapier", Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, repair), rapier_t5_attack_damage)
+                .translatedName("Ruby Rapier")
+                .loot(Equipment.LootProperties.of(4));
+        lute("ruby_lute", Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE, repair), lute_t5_attack_damage)
+                .translatedName("Ruby Lute")
+                .attribute(AttributeModifier.bonus(SpellSchools.ARCANE.id, T4_LUTE_POWER))
+                .attribute(AttributeModifier.bonus(SpellSchools.HEALING.id, T4_LUTE_POWER))
+                .loot(Equipment.LootProperties.of(4));
+    }
+    // ... more conditional registrations
+    Weapon.register(configs, entries, Group.KEY);
+}
+```
+
+**Weapon types:**
+
+<AccordionGroup>
+  <Accordion title="Rapiers">
+    Fast melee weapons with -2.0 attack speed modifier.
+
+    **Base tier weapons:**
+    - Golden Rapier - 2.1 damage
+    - Iron Rapier - 3.6 damage
+    - Diamond Rapier - 4.4 damage
+    - Netherite Rapier - 5.9 damage
+
+    **Mod-dependent weapons:**
+    - Ruby Rapier (Better Nether) - 6.7 damage, tier 4
+    - Aeternium Rapier (Better End) - 6.7 damage, tier 4
+    - Valkyrie Rapier (Aether) - 6.7 damage
+    - Boss rapiers (Loot N Explore) - 6.7 damage, tier 5, rare
+    - Singing Blade (Arsenal) - 6.7 damage, tier 5, rare
+  </Accordion>
+
+  <Accordion title="Lutes">
+    Damage-focused staves with -3.0 attack speed modifier. Provide both Arcane and Healing spell power.
+
+    **Base tier weapons:**
+    - Wooden Lute - 4.0 damage, +3.5 Arcane/Healing power
+    - Diamond Lute - 6.0 damage, +4.0 Arcane/Healing power
+    - Netherite Lute - 8.0 damage, +4.5 Arcane/Healing power
+
+    **Mod-dependent weapons:**
+    - Ruby Lute (Better Nether) - 10.0 damage, +5.0 power, tier 4
+    - Angelic Lute (Aether) - 10.0 damage, +5.0 power
+    - Dragon Lute (Loot N Explore) - 10.0 damage, +5.0 power, tier 5, rare
+    - Unique lutes (Arsenal) - 10.0 damage, +5.0 power, tier 5, rare
+  </Accordion>
+
+  <Accordion title="Lyres">
+    Healing-focused staves with -2.2 attack speed modifier and 3.0 base damage. Provide 50% less Arcane power but 150% more Healing power compared to lutes.
+
+    **Base tier weapons:**
+    - Golden Lyre - +1.8 Arcane, +5.3 Healing power
+    - Diamond Lyre - +2.0 Arcane, +6.0 Healing power
+    - Netherite Lyre - +2.3 Arcane, +6.8 Healing power
+
+    **Mod-dependent weapons:**
+    - Aeternium Lyre (Better End) - +2.5 Arcane, +7.5 Healing, tier 4
+    - Valkyrie Lyre (Aether) - +2.5 Arcane, +7.5 Healing
+    - Siren's Lyre (Loot N Explore) - +2.5 Arcane, +7.5 Healing, tier 5, rare
+    - Lyre of Apollo/Antecael (Arsenal) - +2.5 Arcane, +7.5 Healing, tier 5, rare
+  </Accordion>
+</AccordionGroup>
+
+## Effect registration
+
+Status effects are registered through the `BardsEffects` class, which defines custom beneficial effects for bards.
+
+**Location:** `com/bards/effect/BardsEffects.java:82`
+
+```java
+public static void register(ConfigFile.Effects config) {
+    for (var entry : entries) {
+        Synchronized.configure(entry.effect, true);
+    }
+    Effects.register(entries, config.effects);
+}
+```
+
+**Effects registered:**
+
+<AccordionGroup>
+  <Accordion title="Ballad">
+    **ID:** `bards_rpg:ballad`
+
+    Increases Attack Damage and Spell Power.
+
+    **Attributes per amplifier:**
+    - +2.5% Generic spell power (multiplicative)
+    - +2.5% Attack damage (multiplicative)
+
+    **Location:** `BardsEffects.java:28-46`
+  </Accordion>
+
+  <Accordion title="Troubadour's Minuet">
+    **ID:** `bards_rpg:troubadours_minuet`
+
+    Reduces damage taken.
+
+    **Attributes per amplifier:**
+    - -5% Damage taken (multiplicative)
+
+    **Location:** `BardsEffects.java:48-61`
+  </Accordion>
+
+  <Accordion title="Army's Paeon">
+    **ID:** `bards_rpg:armys_paeon`
+
+    Stash effect. The player buffs nearby allies when damaging enemies with melee hits, arrows, or spells.
+
+    **Location:** `BardsEffects.java:62-70`
+  </Accordion>
+
+  <Accordion title="Army's Motivation">
+    **ID:** `bards_rpg:armys_motivation`
+
+    With each melee, arrow, and spell hit, you deal magic damage according to the highest attribute, scaling with the effect amplifier.
+
+    **Location:** `BardsEffects.java:71-79`
+  </Accordion>
+</AccordionGroup>
+
+## Item group
+
+The Bards item group is created and registered in `BardsMod.registerItems()`.
+
+**Location:** `BardsMod.java:64-68`
+
+```java
+Group.BARDS = FabricItemGroup.builder()
+        .icon(() -> new ItemStack(Armors.troubadourArmorSet.armorSet().head.asItem()))
+        .displayName(Text.translatable("itemGroup.bards_rpg.general"))
+        .build();
+Registry.register(Registries.ITEM_GROUP, Group.KEY, Group.BARDS);
+```
+
+**Properties:**
+- **ID:** `bards_rpg:general`
+- **Icon:** Troubadour Hat
+- **Translation key:** `itemGroup.bards_rpg.general`
+
+## Custom spell impacts
+
+Custom spell impacts are registered through the `CustomSpellImpacts` class.
+
+**Location:** `com/bards/content/CustomSpellImpacts.java:9`
+
+```java
+public static void registerCustomImpacts(){
+    SpellHandlers.registerCustomImpact(
+            Identifier.of(MOD_ID, "armies_paeon_impact"),
+            new ArmiesPaeonImpact()
+    );
+}
+```
+
+**Impacts registered:**
+- `bards_rpg:armies_paeon_impact` - Custom impact handler for Army's Paeon effect

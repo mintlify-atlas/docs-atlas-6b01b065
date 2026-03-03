@@ -1,0 +1,213 @@
+---
+title: Status effects
+description: Complete guide to all Bard status effects including bonuses, durations, and stacking mechanics
+---
+
+Bard spells apply unique status effects to allies and enemies. These effects are synchronized across multiplayer and can stack for increased potency.
+
+## Effect mechanics
+
+<Note>
+All Bard status effects are marked as synchronized, meaning they properly display and function in multiplayer environments. Effects can stack multiple times based on spell power.
+</Note>
+
+### Stacking system
+
+Bard effects use an amplifier cap system:
+- Base amplifier is determined by the spell
+- Maximum stacks scale with Healing spell power
+- Each stack increases the effect's potency
+- Stacks refresh duration when reapplied
+
+## Beneficial effects
+
+These effects benefit the target, typically allies or the caster.
+
+### Ballad
+
+<Accordion title="Effect overview">
+  **Type:** Beneficial  
+  **Color:** Blue-Purple (0x9999ff)  
+  **Applied by:** Magical Ballad spell  
+  **Description:** Increases Attack Damage & Spell Power
+</Accordion>
+
+<Accordion title="Effect modifiers">
+  **Attack Damage Bonus:**
+  - Value: **+2.5% per amplifier**
+  - Operation: Multiplicative (ADD_MULTIPLIED_BASE)
+  - Attribute: `minecraft:generic.attack_damage`
+  
+  **Spell Power Bonus:**
+  - Value: **+2.5% per amplifier**
+  - Operation: Multiplicative (ADD_MULTIPLIED_BASE)
+  - Attribute: Generic Spell Power (affects all spell schools)
+  
+  At amplifier 1 (1 stack), you gain +2.5% to both stats.  
+  At amplifier 3 (3 stacks), you gain +7.5% to both stats.
+</Accordion>
+
+<Accordion title="Stack details">
+  - **Base duration:** 8 seconds
+  - **Base amplifier:** 1
+  - **Max stacks:** 3 (base)
+  - **Scaling:** Amplifier cap increases with Healing spell power (0.15× multiplier)
+  
+  With high Healing power, you can exceed 3 stacks for even greater bonuses.
+</Accordion>
+
+<Tip>
+Ballad is the primary offensive buff for Bards. Keep it stacked on damage dealers to significantly boost their output.
+</Tip>
+
+### Troubadour's Minuet
+
+<Accordion title="Effect overview">
+  **Type:** Beneficial  
+  **Color:** Blue-Purple (0x9999ff)  
+  **Applied by:** Troubadour's Minuet spell  
+  **Description:** Reduces damage taken
+</Accordion>
+
+<Accordion title="Effect modifiers">
+  **Damage Taken Reduction:**
+  - Value: **-5% per amplifier**
+  - Operation: Multiplicative (ADD_MULTIPLIED_BASE)
+  - Attribute: `spell_engine:damage_taken`
+  
+  At amplifier 1 (1 stack), you take 5% less damage.  
+  At amplifier 3 (3 stacks), you take 15% less damage.
+</Accordion>
+
+<Accordion title="Stack details">
+  - **Base duration:** 10 seconds
+  - **Base amplifier:** 1
+  - **Max stacks:** 3 (base)
+  - **Scaling:** Amplifier cap increases with Healing spell power (0.1× multiplier)
+</Accordion>
+
+<Tip>
+Troubadour's Minuet is essential for survivability. Stack it on tanks or fragile allies to keep them alive during tough fights.
+</Tip>
+
+### Army's Paeon
+
+<Accordion title="Effect overview">
+  **Type:** Beneficial (Stash)  
+  **Color:** Blue-Purple (0x9999ff)  
+  **Applied by:** Army's Paeon spell  
+  **Description:** The player buffs nearby allies if he damages enemies with melee hits, arrows or spells
+</Accordion>
+
+<Accordion title="Effect modifiers">
+  This is a stash effect with no direct attribute modifiers. It stores spell data that triggers when specific conditions are met.
+  
+  **Trigger Conditions:**
+  - Melee attack impact
+  - Arrow hit
+  - Damaging spell impact (Active type only)
+  
+  **Behavior:**
+  - Does not consume stash on trigger (consume = 0)
+  - Casts a separate spell when triggered
+  - Triggers affect nearby allies based on the spell's area
+</Accordion>
+
+<Accordion title="Stack details">
+  - **Base duration:** 8 seconds
+  - **Base amplifier:** 1
+  - **Max stacks:** 3 (base)
+  - **Scaling:** Amplifier cap increases with Healing spell power (0.15× multiplier)
+</Accordion>
+
+<Note>
+Army's Paeon itself doesn't provide direct stats. It enables the Army's Motivation effect when you damage enemies.
+</Note>
+
+### Army's Motivation
+
+<Accordion title="Effect overview">
+  **Type:** Beneficial  
+  **Color:** Blue-Purple (0x9999ff)  
+  **Applied by:** Army's Paeon triggers  
+  **Description:** With each melee-, arrow- & spell-hit you deal magic damage, according to the highest attribute, scaling with the effect amplifier
+</Accordion>
+
+<Accordion title="Effect modifiers">
+  This effect has no direct attribute modifiers but enables custom behavior:
+  
+  **Custom Handler:** `bards_rpg:armies_paeon_impact`
+  
+  **Behavior:**
+  - Triggered on melee attacks, arrow hits, and damaging spells
+  - Deals magic damage based on your highest attribute
+  - Damage scales with effect amplifier
+  - Creates golden particle burst on each trigger
+  - Internal cooldown: **1 second** between triggers
+</Accordion>
+
+<Tip>
+Alternate between melee, ranged, and spell attacks to maximize Army's Motivation triggers, but remember the 1-second cooldown between activations.
+</Tip>
+
+## Effect comparison
+
+| Effect | Type | Primary Bonus | Value per Stack | Max Base Stacks | Duration |
+|--------|------|---------------|-----------------|-----------------|----------|
+| Ballad | Offensive | Attack Damage & Spell Power | +2.5% | 3 | 8s |
+| Troubadour's Minuet | Defensive | Damage Reduction | -5% | 3 | 10s |
+| Army's Paeon | Stash | Trigger Enabler | N/A | 3 | 8s |
+| Army's Motivation | Damage | Magic Damage on Hit | Scales | Variable | Variable |
+
+## Maximizing effect stacks
+
+<Steps>
+  <Step title="Increase Healing spell power">
+    Equip weapons and armor that boost Healing spell power. Effects like Ballad and Troubadour's Minuet use Healing school for their buff components.
+  </Step>
+  
+  <Step title="Reapply before expiration">
+    Stack refreshes when reapplied. Time your spell casts to maintain maximum stacks throughout combat.
+  </Step>
+  
+  <Step title="Focus on one effect">
+    With proper timing, you can maintain high stacks of a single effect by repeatedly casting the same spell.
+  </Step>
+  
+  <Step title="Coordinate with allies">
+    Multiple Bards can stack the same effects. Coordinate to keep permanent uptime on key buffs.
+  </Step>
+</Steps>
+
+<Note>
+The amplifier cap multiplier determines how many additional stacks you can gain beyond the base maximum. With 0.15× scaling, every 6.67 points of spell power grants +1 max stack.
+</Note>
+
+## Effect interactions
+
+### Multiplicative stacking
+
+All Bard effects use multiplicative bonuses (ADD_MULTIPLIED_BASE operation). This means:
+
+- Effects stack multiplicatively with base stats
+- Multiple different effects multiply together
+- Scales better with higher base stats
+
+**Example with Ballad:**
+- Base Attack Damage: 10
+- Ballad (3 stacks): +7.5%
+- Final Attack Damage: 10 × 1.075 = 10.75
+
+### Effect duration management
+
+All Bard buff spells have the same cooldown (10 seconds) but different effect durations:
+
+| Spell | Effect Duration | Cooldown | Uptime Potential |
+|-------|----------------|----------|------------------|
+| Troubadour's Minuet | 10s | 10s | 100% |
+| Magical Ballad | 8s | 10s | 80% |
+| Army's Paeon | 8s | 10s | 80% |
+
+<Tip>
+Troubadour's Minuet can achieve 100% uptime if cast on cooldown, making it excellent for sustained defensive support.
+</Tip>

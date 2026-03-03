@@ -1,0 +1,443 @@
+---
+title: Armors
+description: API documentation for the Armors class in Bards RPG
+---
+
+The `Armors` class manages all armor set registration for the Bards RPG mod. It provides methods to create custom armor materials and armor set entries with spell power bonuses and movement speed enhancements.
+
+## Overview
+
+The Armors class defines specialized bard armor sets that provide:
+- Spell power bonuses for Arcane and Healing schools
+- Movement speed multipliers
+- Low armor protection optimized for mobility
+- Tier-based progression system
+
+## Methods
+
+### register()
+
+Registers all armor entries with the Minecraft registry system.
+
+<ParamField path="configs" type="Map<String, ArmorSetConfig>">
+  Configuration map containing armor set statistics and properties
+</ParamField>
+
+```java
+public static void register(Map<String, ArmorSetConfig> configs)
+```
+
+#### Example usage
+
+```java
+import com.bards.item.Armors;
+import net.spell_engine.api.config.ArmorSetConfig;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ModInitializer {
+    public void onInitialize() {
+        Map<String, ArmorSetConfig> configs = new HashMap<>();
+        Armors.register(configs);
+    }
+}
+```
+
+### create()
+
+Creates a new armor set entry with specified properties.
+
+<ParamField path="material" type="RegistryEntry<ArmorMaterial>" required>
+  The armor material registry entry
+</ParamField>
+
+<ParamField path="id" type="Identifier" required>
+  The unique identifier for this armor set
+</ParamField>
+
+<ParamField path="durability" type="int" required>
+  Base durability multiplier for the armor pieces
+</ParamField>
+
+<ParamField path="tier" type="int" required>
+  Loot tier level (determines loot table generation)
+</ParamField>
+
+<ParamField path="factory" type="Armor.Set.ItemFactory" required>
+  Factory function to create armor item instances
+</ParamField>
+
+<ParamField path="defaults" type="ArmorSetConfig" required>
+  Default configuration with armor values and attributes
+</ParamField>
+
+<ParamField path="settings" type="Armor.ItemSettingsTweaker" required>
+  Item settings tweaker for additional properties
+</ParamField>
+
+<ResponseField name="entry" type="Armor.Entry">
+  Returns a configured armor set entry
+</ResponseField>
+
+```java
+private static Armor.Entry create(
+    RegistryEntry<ArmorMaterial> material,
+    Identifier id,
+    int durability,
+    int tier,
+    Armor.Set.ItemFactory factory,
+    ArmorSetConfig defaults,
+    Armor.ItemSettingsTweaker settings
+)
+```
+
+### material()
+
+Creates and registers a custom armor material.
+
+<ParamField path="name" type="String" required>
+  The registry name of the armor material
+</ParamField>
+
+<ParamField path="protectionHead" type="int" required>
+  Armor points for helmet
+</ParamField>
+
+<ParamField path="protectionChest" type="int" required>
+  Armor points for chestplate
+</ParamField>
+
+<ParamField path="protectionLegs" type="int" required>
+  Armor points for leggings
+</ParamField>
+
+<ParamField path="protectionFeet" type="int" required>
+  Armor points for boots
+</ParamField>
+
+<ParamField path="enchantability" type="int" required>
+  How easily the armor can be enchanted
+</ParamField>
+
+<ParamField path="equipSound" type="RegistryEntry<SoundEvent>" required>
+  Sound played when equipping the armor
+</ParamField>
+
+<ParamField path="repairIngredient" type="Supplier<Ingredient>" required>
+  Ingredient used to repair the armor
+</ParamField>
+
+<ResponseField name="material" type="RegistryEntry<ArmorMaterial>">
+  Returns a registered armor material entry
+</ResponseField>
+
+```java
+public static RegistryEntry<ArmorMaterial> material(
+    String name,
+    int protectionHead,
+    int protectionChest,
+    int protectionLegs,
+    int protectionFeet,
+    int enchantability,
+    RegistryEntry<SoundEvent> equipSound,
+    Supplier<Ingredient> repairIngredient
+)
+```
+
+#### Example material creation
+
+```java
+// Entertainer's Garb material (Tier 1)
+public static RegistryEntry<ArmorMaterial> entertainers_garb = material(
+    "entertainers_garb",
+    1, 3, 2, 1,  // Protection values
+    9,           // Enchantability
+    SoundEvents.ITEM_ARMOR_EQUIP_GENERIC,
+    () -> Ingredient.fromTag(ItemTags.WOOL)
+);
+
+// Netherite Troubadour's Garb material (Tier 3)
+public static RegistryEntry<ArmorMaterial> netherite_troubadours_garb = material(
+    "netherite_troubadours_garb",
+    1, 3, 2, 1,  // Protection values
+    15,          // Enchantability
+    SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE,
+    () -> Ingredient.ofItems(Items.NETHERITE_INGOT)
+);
+```
+
+## Armor materials
+
+### Available materials
+
+<ResponseField name="entertainers_garb" type="RegistryEntry<ArmorMaterial>">
+  Tier 1 bard armor material. Protection: 1/3/2/1, Enchantability: 9, Repair: Wool
+</ResponseField>
+
+<ResponseField name="troubadours_garb" type="RegistryEntry<ArmorMaterial>">
+  Tier 2 bard armor material. Protection: 1/3/2/1, Enchantability: 10, Repair: Wool
+</ResponseField>
+
+<ResponseField name="netherite_troubadours_garb" type="RegistryEntry<ArmorMaterial>">
+  Tier 3 bard armor material. Protection: 1/3/2/1, Enchantability: 15, Repair: Netherite Ingot
+</ResponseField>
+
+<ResponseField name="storytellers_garb" type="RegistryEntry<ArmorMaterial>">
+  Tier 5 bard armor material. Protection: 1/3/2/1, Enchantability: 18, Repair: Netherite Ingot
+</ResponseField>
+
+## Armor sets
+
+### Entertainer armor set
+
+Tier 1 armor set with basic spell power and movement speed bonuses.
+
+```java
+public static final Armor.Entry entertainerArmorSet = create(
+    entertainers_garb,
+    Identifier.of(MOD_ID, "entertainer_garb"),
+    10,  // Durability
+    1,   // Tier
+    Armor.CustomItem::new,
+    ArmorSetConfig.with(
+        new ArmorSetConfig.Piece(1)  // Helmet
+            .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+            .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+            .add(movementSpeed(0.03F)),
+        new ArmorSetConfig.Piece(3)  // Chestplate
+            .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+            .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+            .add(movementSpeed(0.03F)),
+        new ArmorSetConfig.Piece(2)  // Leggings
+            .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+            .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+            .add(movementSpeed(0.03F)),
+        new ArmorSetConfig.Piece(1)  // Boots
+            .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+            .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+            .add(movementSpeed(0.03F))
+    ),
+    commonSettings(null)
+).translatedName("Entertainer Hat", "Entertainer Garb", "Entertainer Trousers", "Entertainer Boots");
+```
+
+### Troubadour armor set
+
+Tier 2 armor set with enhanced spell power and movement speed.
+
+```java
+public static final Armor.Entry troubadourArmorSet = create(
+    troubadours_garb,
+    Identifier.of(MOD_ID, "troubadour_garb"),
+    20,  // Durability
+    2,   // Tier
+    Armor.CustomItem::new,
+    ArmorSetConfig.with(
+        new ArmorSetConfig.Piece(1)
+            .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.2F))
+            .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.2F))
+            .add(movementSpeed(0.04F)),
+        // ... (similar for other pieces)
+    ),
+    commonSettings(null)
+).translatedName("Troubadour Hat", "Troubadour Garb", "Troubadour Trousers", "Troubadour Boots");
+```
+
+### Netherite troubadour armor set
+
+Tier 3 armor set with high spell power and movement speed.
+
+```java
+public static final Armor.Entry netheriteTroubadourArmorSet = create(
+    netherite_troubadours_garb,
+    Identifier.of(MOD_ID, "netherite_troubadour_garb"),
+    30,  // Durability
+    3,   // Tier
+    Armor.CustomItem::new,
+    ArmorSetConfig.with(
+        new ArmorSetConfig.Piece(1)
+            .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.25F))
+            .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.25F))
+            .add(movementSpeed(0.05F)),
+        // ... (similar for other pieces)
+    ),
+    commonSettings(null)
+).translatedName("Netherite Troubadour Hat", "Netherite Troubadour Garb", "Netherite Troubadour Trousers", "Netherite Troubadour Boots");
+```
+
+### Storyteller armor set
+
+Tier 5 armor set with maximum spell power and movement speed (requires Armory RPGs mod).
+
+```java
+public static Armor.Entry storytellerArmorSet;
+
+// Registered conditionally in register() method
+if (FabricLoader.getInstance().isModLoaded("armory_rpgs") || 
+    BardsMod.tweaksConfig.value.ignore_items_required_mods) {
+    
+    storytellerArmorSet = create(
+        storytellers_garb,
+        Identifier.of(MOD_ID, "storyteller_garb"),
+        40,  // Durability
+        5,   // Tier
+        Armor.CustomItem::new,
+        ArmorSetConfig.with(
+            new ArmorSetConfig.Piece(1)
+                .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.3F))
+                .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.3F))
+                .add(movementSpeed(0.06F)),
+            // ... (similar for other pieces)
+        ),
+        commonSettings(null)
+    ).translatedName("Storyteller Hat", "Storyteller Tunic", "Storyteller Trousers", "Storyteller Boots");
+}
+```
+
+## Attribute modifiers
+
+### Movement speed
+
+Creates a movement speed attribute modifier.
+
+<ParamField path="value" type="float" required>
+  The movement speed multiplier (e.g., 0.03 = 3% speed increase)
+</ParamField>
+
+<ResponseField name="modifier" type="AttributeModifier">
+  Returns a movement speed attribute modifier
+</ResponseField>
+
+```java
+private static AttributeModifier movementSpeed(float value) {
+    return new AttributeModifier(
+        "generic.movement_speed",
+        value,
+        EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE
+    );
+}
+```
+
+### Spell power constants
+
+<ResponseField name="bard_spell_power_t1" type="float" default="0.15F">
+  Tier 1 spell power multiplier (15% bonus)
+</ResponseField>
+
+<ResponseField name="bard_spell_power_t2" type="float" default="0.2F">
+  Tier 2 spell power multiplier (20% bonus)
+</ResponseField>
+
+<ResponseField name="bard_spell_power_t3" type="float" default="0.25F">
+  Tier 3 spell power multiplier (25% bonus)
+</ResponseField>
+
+<ResponseField name="bard_spell_power_t5" type="float" default="0.3F">
+  Tier 5 spell power multiplier (30% bonus)
+</ResponseField>
+
+### Movement speed constants
+
+<ResponseField name="bard_speed_T1" type="float" default="0.03F">
+  Tier 1 movement speed multiplier (3% bonus)
+</ResponseField>
+
+<ResponseField name="bard_speed_T2" type="float" default="0.04F">
+  Tier 2 movement speed multiplier (4% bonus)
+</ResponseField>
+
+<ResponseField name="bard_speed_T3" type="float" default="0.05F">
+  Tier 3 movement speed multiplier (5% bonus)
+</ResponseField>
+
+<ResponseField name="bard_speed_T5" type="float" default="0.06F">
+  Tier 5 movement speed multiplier (6% bonus)
+</ResponseField>
+
+## Item settings
+
+### commonSettings()
+
+Creates common item settings for armor pieces.
+
+<ParamField path="equipmentSetId" type="Identifier">
+  Optional equipment set identifier for set bonuses
+</ParamField>
+
+<ResponseField name="tweaker" type="Armor.ItemSettingsTweaker">
+  Returns an item settings tweaker that sets equipment set component and rarity
+</ResponseField>
+
+```java
+private static Armor.ItemSettingsTweaker commonSettings(Identifier equipmentSetId) {
+    return Armor.ItemSettingsTweaker.standard(itemSettings -> {
+        itemSettings
+            .component(SpellDataComponents.EQUIPMENT_SET, equipmentSetId)
+            .component(DataComponentTypes.RARITY, Rarity.RARE);
+    });
+}
+```
+
+## Data structures
+
+### Armor entries collection
+
+<ResponseField name="entries" type="ArrayList<Armor.Entry>">
+  Collection of all registered armor entries. This list is populated during initialization and used for registration.
+</ResponseField>
+
+```java
+public static final ArrayList<Armor.Entry> entries = new ArrayList<>();
+```
+
+### Set passive identifier
+
+<ResponseField name="storyteller_passive" type="Identifier">
+  Identifier for the Storyteller armor set passive ability
+</ResponseField>
+
+```java
+public static Identifier storyteller_passive = Identifier.of(MOD_ID, "storyteller");
+```
+
+## Full armor piece configuration
+
+Each armor piece in a set is configured with:
+
+```java
+new ArmorSetConfig.Piece(armorValue)
+    .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, spellPowerMultiplier))
+    .add(AttributeModifier.multiply(SpellSchools.HEALING.id, spellPowerMultiplier))
+    .add(movementSpeed(speedMultiplier))
+```
+
+### Example complete set
+
+```java
+ArmorSetConfig.with(
+    // Helmet
+    new ArmorSetConfig.Piece(1)
+        .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+        .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+        .add(movementSpeed(0.03F)),
+    
+    // Chestplate
+    new ArmorSetConfig.Piece(3)
+        .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+        .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+        .add(movementSpeed(0.03F)),
+    
+    // Leggings
+    new ArmorSetConfig.Piece(2)
+        .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+        .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+        .add(movementSpeed(0.03F)),
+    
+    // Boots
+    new ArmorSetConfig.Piece(1)
+        .add(AttributeModifier.multiply(SpellSchools.ARCANE.id, 0.15F))
+        .add(AttributeModifier.multiply(SpellSchools.HEALING.id, 0.15F))
+        .add(movementSpeed(0.03F))
+)
+```

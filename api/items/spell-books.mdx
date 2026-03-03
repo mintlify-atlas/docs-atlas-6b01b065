@@ -1,0 +1,217 @@
+---
+title: BardBooks
+description: API documentation for the BardBooks class in Bards RPG
+---
+
+The `BardBooks` class manages spell book registration for the Bards RPG mod. It provides a simple interface to create and register spell books that players can use to learn and cast bard-specific spells.
+
+## Overview
+
+The BardBooks class handles the creation and registration of spell books for the bard class. Spell books are special items that contain spell knowledge and can be used by players to access their bard abilities.
+
+## Methods
+
+### register()
+
+Registers all spell books for the Bards RPG mod.
+
+```java
+public static void register()
+```
+
+This method creates and registers spell books using the Spell Engine API. It iterates through a predefined list of book names and registers each one with the appropriate group key.
+
+#### Example usage
+
+```java
+import com.bards.item.BardBooks;
+
+public class ModInitializer {
+    public void onInitialize() {
+        BardBooks.register();
+    }
+}
+```
+
+#### Implementation details
+
+```java
+public static void register() {
+    var books = List.of("bard");
+    for (var name: books) {
+        SpellBooks.createAndRegister(Identifier.of(MOD_ID, name), Group.KEY);
+    }
+}
+```
+
+The method:
+1. Creates a list containing the book names (currently only "bard")
+2. Iterates through each book name
+3. Creates an identifier using the mod ID and book name
+4. Registers the spell book with the Spell Engine API
+
+## Spell book structure
+
+### Book naming convention
+
+Spell books follow the naming pattern: `bards:bard`
+
+- **Namespace**: `bards` (the mod ID)
+- **Path**: Book name from the list (e.g., `bard`)
+
+### Registration with Spell Engine
+
+The registration uses the Spell Engine API's `createAndRegister` method:
+
+<ParamField path="identifier" type="Identifier" required>
+  The unique identifier for the spell book (e.g., `bards:bard`)
+</ParamField>
+
+<ParamField path="groupKey" type="ItemGroup.Key" required>
+  The creative inventory group where the book should appear
+</ParamField>
+
+```java
+SpellBooks.createAndRegister(
+    Identifier.of(MOD_ID, "bard"),
+    Group.KEY
+)
+```
+
+## Book entries
+
+### Bard spell book
+
+The main spell book for bard class spells.
+
+<ResponseField name="identifier" type="Identifier">
+  `bards:bard`
+</ResponseField>
+
+<ResponseField name="group" type="ItemGroup.Key">
+  `Group.KEY` - The Bards RPG creative tab
+</ResponseField>
+
+```java
+var books = List.of("bard");
+```
+
+## Extending the system
+
+### Adding additional spell books
+
+To add more spell book types, simply add their names to the books list:
+
+```java
+public static void register() {
+    var books = List.of(
+        "bard",
+        "advanced_bard",
+        "legendary_bard"
+    );
+    for (var name: books) {
+        SpellBooks.createAndRegister(Identifier.of(MOD_ID, name), Group.KEY);
+    }
+}
+```
+
+### Custom registration
+
+For more control over individual spell books, you can register them separately:
+
+```java
+public static void register() {
+    // Standard bard book
+    SpellBooks.createAndRegister(
+        Identifier.of(MOD_ID, "bard"),
+        Group.KEY
+    );
+    
+    // Special bard book with custom settings
+    SpellBooks.createAndRegister(
+        Identifier.of(MOD_ID, "master_bard"),
+        CustomGroup.KEY
+    );
+}
+```
+
+## Dependencies
+
+The BardBooks class depends on:
+
+- `net.spell_engine.api.item.SpellBooks` - Provides the spell book creation and registration functionality
+- `net.minecraft.util.Identifier` - For creating unique identifiers
+- `com.bards.item.Group` - The creative tab group for Bards items
+
+## Integration with Spell Engine
+
+The spell books registered by this class integrate with the Spell Engine mod to:
+
+1. Store spell data and configurations
+2. Provide spell learning mechanics
+3. Enable spell casting functionality
+4. Integrate with the spell progression system
+
+## Example: Complete registration flow
+
+```java
+package com.bards.item;
+
+import net.minecraft.util.Identifier;
+import net.spell_engine.api.item.SpellBooks;
+
+import java.util.List;
+
+import static com.bards.BardsMod.MOD_ID;
+
+public class BardBooks {
+    public static void register() {
+        // Define all spell book names
+        var books = List.of("bard");
+        
+        // Register each spell book
+        for (var name: books) {
+            // Create identifier: bards:bard
+            Identifier bookId = Identifier.of(MOD_ID, name);
+            
+            // Register with Spell Engine API
+            SpellBooks.createAndRegister(bookId, Group.KEY);
+        }
+    }
+}
+```
+
+## Best practices
+
+### Naming conventions
+
+- Use lowercase names for spell books
+- Use underscores for multi-word names (e.g., `advanced_bard`)
+- Keep names descriptive and related to the spell content
+
+### Registration timing
+
+Register spell books during mod initialization, before items are needed:
+
+```java
+public class BardsMod implements ModInitializer {
+    @Override
+    public void onInitialize() {
+        // Register spell books early in initialization
+        BardBooks.register();
+        
+        // Other initialization code...
+    }
+}
+```
+
+### Group organization
+
+Ensure spell books appear in the correct creative tab by using the appropriate group key:
+
+```java
+SpellBooks.createAndRegister(
+    Identifier.of(MOD_ID, name),
+    Group.KEY  // Bards RPG creative tab
+);
+```

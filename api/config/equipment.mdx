@@ -1,0 +1,233 @@
+---
+title: "Equipment configuration"
+description: "Configure weapons and armor sets for the Bards RPG mod"
+---
+
+## Overview
+
+The equipment configuration API manages all weapons and armor sets in the Bards RPG mod. Configuration is handled through the `itemConfig` manager, which reads from and writes to the `equipment.json` file in the mod's config directory.
+
+## Configuration manager
+
+The equipment configuration is managed by `BardsMod.itemConfig`:
+
+```java
+public static ConfigManager<ConfigFile.Equipment> itemConfig = new ConfigManager<>
+        ("equipment", Default.itemConfig)
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+### Properties
+
+<ParamField path="name" type="string" default="equipment">
+  The configuration file name (generates `equipment.json`)
+</ParamField>
+
+<ParamField path="directory" type="string" default="bards_rpg">
+  The mod's configuration directory
+</ParamField>
+
+<ParamField path="sanitize" type="boolean" default="true">
+  Automatically sanitizes and validates configuration values
+</ParamField>
+
+## Configuration structure
+
+The equipment configuration file contains two main sections:
+
+### Armor sets
+
+Armor sets are stored in the `armor_sets` map with the following structure:
+
+```json
+{
+  "armor_sets": {
+    "bards_rpg:entertainer_garb": {
+      "head": {
+        "armor": 1,
+        "attributes": [
+          {
+            "id": "spell_power:arcane",
+            "value": 0.15,
+            "operation": "ADD_MULTIPLIED_BASE"
+          },
+          {
+            "id": "spell_power:healing",
+            "value": 0.15,
+            "operation": "ADD_MULTIPLIED_BASE"
+          },
+          {
+            "id": "minecraft:generic.movement_speed",
+            "value": 0.03,
+            "operation": "ADD_MULTIPLIED_BASE"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+#### Armor set configuration
+
+<ParamField path="armor_sets.[set_id].head" type="object">
+  Helmet piece configuration
+  
+  <ParamField path="armor" type="integer">
+    Armor protection value
+  </ParamField>
+  
+  <ParamField path="attributes" type="array">
+    List of attribute modifiers applied when equipped
+  </ParamField>
+</ParamField>
+
+<ParamField path="armor_sets.[set_id].chest" type="object">
+  Chestplate piece configuration (same structure as head)
+</ParamField>
+
+<ParamField path="armor_sets.[set_id].legs" type="object">
+  Leggings piece configuration (same structure as head)
+</ParamField>
+
+<ParamField path="armor_sets.[set_id].feet" type="object">
+  Boots piece configuration (same structure as head)
+</ParamField>
+
+### Weapons
+
+Weapons are stored in the `weapons` map:
+
+```json
+{
+  "weapons": {
+    "bards_rpg:wooden_lute": {
+      "attack_damage": 4.0,
+      "attack_speed": -3.0,
+      "attributes": [
+        {
+          "id": "spell_power:arcane",
+          "value": 3.5,
+          "operation": "ADD_VALUE"
+        },
+        {
+          "id": "spell_power:healing",
+          "value": 3.5,
+          "operation": "ADD_VALUE"
+        }
+      ]
+    }
+  }
+}
+```
+
+#### Weapon configuration
+
+<ParamField path="weapons.[weapon_id].attack_damage" type="float">
+  Base attack damage for the weapon
+</ParamField>
+
+<ParamField path="weapons.[weapon_id].attack_speed" type="float">
+  Attack speed modifier (negative values slow down attacks)
+</ParamField>
+
+<ParamField path="weapons.[weapon_id].attributes" type="array">
+  List of attribute modifiers applied when equipped
+</ParamField>
+
+## Weapon types
+
+The mod includes three weapon categories:
+
+### Rapiers
+
+- Attack speed: `-2.0`
+- Weapon type: `SWORD`
+- Available tiers: Golden, Iron, Diamond, Netherite, Ruby, Aeternium, Aether, and unique variants
+
+### Lutes
+
+- Attack speed: `-3.0`
+- Weapon type: `DAMAGE_STAFF`
+- Spell power bonus (Arcane & Healing):
+  - T1 (Wooden): `3.5`
+  - T2 (Diamond): `4.0`
+  - T3 (Netherite): `4.5`
+  - T4 (Ruby/Aeternium/Aether): `5.0`
+
+### Lyres
+
+- Attack speed: `-2.2`
+- Attack damage: `3.0`
+- Weapon type: `HEALING_STAFF`
+- Spell power bonuses:
+  - Arcane: 50% of lute power
+  - Healing: 150% of lute power
+
+## Armor tiers
+
+The mod provides four armor tiers:
+
+### Entertainer's garb (Tier 1)
+
+- Protection: 1/3/2/1 (head/chest/legs/feet)
+- Spell power bonus: `0.15` (15%)
+- Movement speed: `0.03` (3%)
+- Enchantability: `9`
+
+### Troubadour's garb (Tier 2)
+
+- Protection: 1/3/2/1
+- Spell power bonus: `0.2` (20%)
+- Movement speed: `0.04` (4%)
+- Enchantability: `10`
+
+### Netherite troubadour's garb (Tier 3)
+
+- Protection: 1/3/2/1
+- Spell power bonus: `0.25` (25%)
+- Movement speed: `0.05` (5%)
+- Enchantability: `15`
+
+### Storyteller's garb (Tier 5)
+
+- Protection: 1/3/2/1
+- Spell power bonus: `0.3` (30%)
+- Movement speed: `0.06` (6%)
+- Enchantability: `18`
+- Requires: `armory_rpgs` mod (or `ignore_items_required_mods` tweak)
+
+## Usage example
+
+Accessing and modifying equipment configuration:
+
+```java
+import com.bards.BardsMod;
+import net.spell_engine.api.config.ConfigFile;
+
+// Refresh configuration from file
+BardsMod.itemConfig.refresh();
+
+// Access current configuration
+ConfigFile.Equipment config = BardsMod.itemConfig.value;
+
+// Register armor and weapons
+Armors.register(config.armor_sets);
+Weapons.register(config.weapons);
+
+// Save modified configuration
+BardsMod.itemConfig.save();
+```
+
+## File location
+
+The equipment configuration file is located at:
+
+```
+config/bards_rpg/equipment.json
+```
+
+This file is automatically created with default values on first run and can be edited to customize equipment attributes.

@@ -1,0 +1,221 @@
+---
+title: Installation
+description: Install Bards RPG on Fabric or NeoForge for Minecraft 1.21.1
+---
+
+## Requirements
+
+Before installing Bards RPG, ensure you have:
+
+- Minecraft Java Edition **1.21.1**
+- Either Fabric Loader **0.17.2+** or NeoForge **21.1.201+**
+- At least 4GB of RAM allocated to Minecraft
+
+<Warning>
+  Bards RPG is built for Minecraft 1.21.1. Other versions are not supported.
+</Warning>
+
+## Choose your mod loader
+
+Bards RPG supports both Fabric and NeoForge. Choose the installation method that matches your preferred mod loader.
+
+<Tabs>
+  <Tab title="Fabric">
+    ### Install Fabric Loader
+
+    <Steps>
+      <Step title="Download Fabric Installer">
+        Visit [fabricmc.net](https://fabricmc.net/use/) and download the Fabric installer for your operating system.
+      </Step>
+      <Step title="Run the installer">
+        Open the installer and select Minecraft version **1.21.1**. Click "Install" to set up the Fabric profile.
+      </Step>
+      <Step title="Launch Minecraft">
+        Open the Minecraft Launcher and select the "fabric-loader-1.21.1" profile. Launch the game once to generate the mods folder.
+      </Step>
+    </Steps>
+
+    ### Install required dependencies
+
+    Download these required mods and place them in your `.minecraft/mods` folder:
+
+    <AccordionGroup>
+      <Accordion title="Core dependencies" icon="puzzle-piece">
+        - **Fabric API** (version 0.115.6+1.21.1)
+        - **Spell Engine** (version 1.8.19+1.21.1)
+        - **Spell Power** (version 1.4.5+1.21.1)
+        - **More RPG Library** (version 2.5.15+1.21.1)
+        - **Runes** (version 1.2.0+1.21.1)
+        - **Player Animator** (version 2.0.1+1.21.1)
+        - **Cloth Config** (version 15.0.130)
+        - **Tiny Config** (version 3.1.0)
+        - **Structure Pool API** (version 1.2.0+1.21.1)
+      </Accordion>
+      <Accordion title="Optional dependencies" icon="star">
+        - **Trinkets** (version 3.10.0) - Recommended for accessory slots
+        - **Mod Menu** (version 11.0.2) - Provides in-game configuration menu
+      </Accordion>
+      <Accordion title="Compatibility mods" icon="link">
+        These mods add additional content to Bards RPG:
+        - **Better Nether** - Adds Ruby-tier weapons
+        - **Better End** - Adds Aeternium-tier weapons
+        - **Aether** - Adds Valkyrie and Angelic weapons
+        - **Loot N Explore** - Adds boss-themed unique weapons
+        - **Arsenal** - Adds more unique weapons
+        - **Armory RPGs** - Unlocks Storyteller armor set
+      </Accordion>
+    </AccordionGroup>
+
+    ### Install Bards RPG
+
+    <Steps>
+      <Step title="Download the mod">
+        Download **bards_rpg-fabric-1.0.0-1.21.1.jar** from CurseForge or Modrinth.
+      </Step>
+      <Step title="Place in mods folder">
+        Move the downloaded JAR file to `.minecraft/mods/`
+      </Step>
+      <Step title="Launch the game">
+        Start Minecraft with the Fabric profile. Bards RPG should appear in the mods list.
+      </Step>
+    </Steps>
+
+    <Note>
+      On Windows, press `Win + R`, type `%appdata%\.minecraft\mods`, and press Enter to open your mods folder.
+    </Note>
+  </Tab>
+
+  <Tab title="NeoForge">
+    ### Install NeoForge
+
+    <Steps>
+      <Step title="Download NeoForge installer">
+        Visit [neoforged.net](https://neoforged.net/) and download the installer for Minecraft **1.21.1** (version 21.1.201 or newer).
+      </Step>
+      <Step title="Run the installer">
+        Open the installer, select "Install client", and click OK. This will create a NeoForge profile in your launcher.
+      </Step>
+      <Step title="Launch Minecraft">
+        Open the Minecraft Launcher, select the NeoForge profile, and launch once to generate the mods folder.
+      </Step>
+    </Steps>
+
+    ### Install required dependencies
+
+    Download these required mods and place them in your `.minecraft/mods` folder:
+
+    <AccordionGroup>
+      <Accordion title="Core dependencies" icon="puzzle-piece">
+        - **Forgified Fabric API** (version 0.115.6+2.1.1+1.21.1)
+        - **Spell Engine** (version 1.8.19+1.21.1)
+        - **Spell Power** (version 1.4.5+1.21.1)
+        - **More RPG Library** (version 2.5.15+1.21.1)
+        - **Runes** (version 1.2.0+1.21.1)
+        - **Player Animator** (version 2.0.1+1.21.1)
+        - **Cloth Config** (version 15.0.130)
+        - **Tiny Config** (version 3.1.0)
+        - **Structure Pool API** (version 1.2.0+1.21.1)
+        - **Owo Lib** (version 0.12.15.5-beta.1+1.21)
+      </Accordion>
+      <Accordion title="Optional dependencies" icon="star">
+        - **Accessories** (version 1.1.0-beta.48+1.21.1) - Recommended for accessory slots
+      </Accordion>
+      <Accordion title="Compatibility mods" icon="link">
+        These mods add additional content to Bards RPG:
+        - **Better Nether** - Adds Ruby-tier weapons
+        - **Better End** - Adds Aeternium-tier weapons
+        - **Aether** - Adds Valkyrie and Angelic weapons
+        - **Loot N Explore** - Adds boss-themed unique weapons
+        - **Arsenal** - Adds more unique weapons
+        - **Armory RPGs** - Unlocks Storyteller armor set
+      </Accordion>
+    </AccordionGroup>
+
+    ### Install Bards RPG
+
+    <Steps>
+      <Step title="Download the mod">
+        Download **bards_rpg-neoforge-1.0.0-1.21.1.jar** from CurseForge or Modrinth.
+      </Step>
+      <Step title="Place in mods folder">
+        Move the downloaded JAR file to `.minecraft/mods/`
+      </Step>
+      <Step title="Launch the game">
+        Start Minecraft with the NeoForge profile. Bards RPG should load successfully.
+      </Step>
+    </Steps>
+
+    <Note>
+      On Windows, press `Win + R`, type `%appdata%\.minecraft\mods`, and press Enter to open your mods folder.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Verify installation
+
+To confirm Bards RPG is installed correctly:
+
+<Steps>
+  <Step title="Check the mods list">
+    In the main menu, click "Mods" (Fabric) or access the mods list through the main menu (NeoForge). Look for "Bards RPG class" in the list.
+  </Step>
+  <Step title="Check Creative inventory">
+    Open a Creative world and search for "bard" in the item search. You should see rapiers, lutes, lyres, and bard armor sets.
+  </Step>
+  <Step title="Look for the Bard spell book">
+    Search for "bard" in Creative mode. You should find a Bard spell book item that contains all bard spells.
+  </Step>
+</Steps>
+
+<Check>
+  If you can find bard items and the spell book, installation was successful!
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Game crashes on startup" icon="triangle-exclamation">
+    This usually means a required dependency is missing. Check that you've installed all core dependencies listed above. Review your latest.log file in `.minecraft/logs/` for specific missing mod errors.
+  </Accordion>
+  <Accordion title="No bard items appear in Creative" icon="box-open">
+    Verify that Bards RPG is actually loaded by checking the mods list. If it's not there, ensure you downloaded the correct version (Fabric vs NeoForge) and that it's in the mods folder.
+  </Accordion>
+  <Accordion title="Version mismatch errors" icon="code-branch">
+    Ensure all mods are for Minecraft 1.21.1. Bards RPG requires exact version matches for Spell Engine, Spell Power, and More RPG Library.
+  </Accordion>
+  <Accordion title="Performance issues" icon="gauge-high">
+    Allocate at least 4GB of RAM to Minecraft. In the launcher, edit your profile and adjust JVM arguments: `-Xmx4G` (or higher like `-Xmx6G` for 6GB).
+  </Accordion>
+</AccordionGroup>
+
+## Configuration
+
+After installation, Bards RPG generates configuration files in `.minecraft/config/bards_rpg/`:
+
+- `equipment.json` - Customize weapon and armor stats
+- `effects.json` - Modify status effect attributes
+- `tweaks.json` - General mod behavior settings
+- `villages.json` - Village structure integration settings
+
+<Note>
+  You can use Cloth Config's in-game GUI to edit these settings without manually editing JSON files.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Quickstart guide"
+    icon="bolt"
+    href="/quickstart"
+  >
+    Learn how to play as a Bard and cast your first spells
+  </Card>
+  <Card
+    title="Configuration"
+    icon="gear"
+    href="/guides/configurations"
+  >
+    Customize Bards RPG to fit your playstyle
+  </Card>
+</CardGroup>

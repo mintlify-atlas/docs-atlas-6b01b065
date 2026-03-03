@@ -1,0 +1,372 @@
+---
+title: Configurations
+description: Complete guide to configuring Bards RPG through config files
+---
+
+## Configuration overview
+
+Bards RPG uses a modular configuration system powered by the **tiny_config** library. All config files are stored in JSON format and automatically generate with default values on first launch.
+
+**Config directory**: `config/bards_rpg/`
+
+## Available config files
+
+Bards RPG manages four separate configuration files:
+
+1. **equipment.json** - Weapon and armor statistics
+2. **effects.json** - Status effect attributes
+3. **villages.json** - Village structure generation
+4. **tweaks.json** - Mod compatibility and tweaks
+
+## Equipment configuration
+
+**File**: `config/bards_rpg/equipment.json`
+
+**Type**: `ConfigFile.Equipment`
+
+**Manager**: `BardsMod.itemConfig`
+
+### What it controls
+
+This config file manages all weapon and armor set statistics, including:
+- Attack damage and speed for weapons
+- Spell power coefficients
+- Armor protection values
+- Attribute modifiers
+- Durability values
+
+### Structure
+
+The equipment config contains two main sections:
+
+```json
+{
+  "weapons": {
+    "wooden_lute": {
+      "attack_damage": 4.0,
+      "attack_speed": -3.0,
+      // ... additional weapon properties
+    },
+    // ... more weapons
+  },
+  "armor_sets": {
+    "entertainer_garb": {
+      "head": { /* armor piece config */ },
+      "chest": { /* armor piece config */ },
+      "legs": { /* armor piece config */ },
+      "feet": { /* armor piece config */ }
+    },
+    // ... more armor sets
+  }
+}
+```
+
+### Customization examples
+
+**Increase Wooden Lute damage**:
+Find `"wooden_lute"` in the weapons section and modify `attack_damage`.
+
+**Modify spell power bonuses**:
+Adjust attribute modifiers for specific spell schools (arcane, healing).
+
+**Change armor protection**:
+Edit protection values in armor piece configurations.
+
+### Important notes
+
+- Config automatically regenerates if deleted
+- **Sanitization enabled**: Invalid values are corrected on load
+- Changes require game restart to take effect
+- Backup config before making extensive changes
+
+## Effects configuration
+
+**File**: `config/bards_rpg/effects.json`
+
+**Type**: `ConfigFile.Effects`
+
+**Manager**: `BardsMod.effectsConfig`
+
+### What it controls
+
+Manages all Bard status effects and their attribute modifiers:
+
+**Ballad** (`bards_rpg:ballad`):
+- Spell power multiplier: +2.5% per amplifier
+- Attack damage multiplier: +2.5% per amplifier
+- Operation: ADD_MULTIPLIED_BASE
+
+**Troubadour's Minuet** (`bards_rpg:troubadours_minuet`):
+- Damage taken reduction: -5%
+- Operation: ADD_MULTIPLIED_BASE
+
+**Army's Paeon** (`bards_rpg:armys_paeon`):
+- Visual effect only (triggers Army's Motivation)
+- No direct attribute modifiers
+
+**Army's Motivation** (`bards_rpg:armys_motivation`):
+- Triggered by damaging enemies while Army's Paeon is active
+- Effect scales with amplifier
+
+### Structure
+
+```json
+{
+  "effects": {
+    "bards_rpg:ballad": {
+      "attributes": [
+        {
+          "id": "spell_power:generic",
+          "value": 0.025,
+          "operation": "ADD_MULTIPLIED_BASE"
+        },
+        {
+          "id": "minecraft:generic.attack_damage",
+          "value": 0.025,
+          "operation": "ADD_MULTIPLIED_BASE"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Customization examples
+
+**Increase Ballad buff strength**:
+Change `value` from `0.025` (2.5%) to `0.05` (5%) for stronger buffs.
+
+**Modify Troubadour's Minuet defense**:
+Adjust the damage reduction percentage in the effect configuration.
+
+**Add custom attributes**:
+Insert additional attribute modifiers to effects.
+
+## Village configuration
+
+**File**: `config/bards_rpg/villages.json`
+
+**Type**: `StructurePoolConfig`
+
+**Manager**: `BardsMod.villageConfig`
+
+### What it controls
+
+Configures Bard pub generation in Minecraft villages across different biomes.
+
+### Default configuration
+
+Bard pubs spawn in five village types:
+- Desert villages
+- Savanna villages
+- Plains villages
+- Taiga villages
+- Snowy villages
+
+### Structure
+
+```json
+{
+  "entries": [
+    {
+      "pool": "minecraft:village/desert/houses",
+      "structure": "bards_rpg:village/desert/pub",
+      "weight": 3,
+      "limit": 1
+    },
+    // ... additional village types
+  ]
+}
+```
+
+### Parameters
+
+**pool**: The vanilla village structure pool to add to
+
+**structure**: The Bards RPG pub structure to add
+
+**weight**: Relative spawn chance (higher = more common)
+
+**limit**: Maximum number of pubs per village
+
+### Customization examples
+
+**Increase pub spawn rate**:
+Change `"weight": 3` to `"weight": 10` for more common spawns.
+
+**Allow multiple pubs per village**:
+Change `"limit": 1` to `"limit": 3`.
+
+**Disable specific biome pubs**:
+Remove the corresponding entry from the array.
+
+**Add pubs to custom village types**:
+Add new entries for modded village pools.
+
+## Tweaks configuration
+
+**File**: `config/bards_rpg/tweaks.json`
+
+**Type**: `TweaksConfig`
+
+**Manager**: `BardsMod.tweaksConfig`
+
+### What it controls
+
+Development and compatibility settings.
+
+### Structure
+
+```json
+{
+  "ignore_items_required_mods": false
+}
+```
+
+### Parameters
+
+**ignore_items_required_mods**:
+- Type: Boolean
+- Default: `false`
+- Development environment: Automatically set to `true`
+
+### What it does
+
+When enabled, this setting allows Bard items that normally require other mods to be registered even when those mods aren't installed.
+
+**Affected items**:
+- Ruby equipment (requires Better Nether)
+- Aeternium equipment (requires Better End)
+- Valkyrie/Angelic equipment (requires Aether)
+- Storyteller armor (requires Armory RPGs)
+- Boss weapons (requires Loot N Explore)
+- Unique weapons (requires Arsenal)
+
+### Use cases
+
+**Testing without dependencies**:
+Set to `true` to test all Bard items without installing optional mods.
+
+**Pack development**:
+Enable to preview high-tier equipment in creative mode.
+
+**Production environments**:
+Leave as `false` (default) to enforce mod requirements.
+
+### Warning
+
+Enabling this in production may cause issues:
+- Missing repair materials
+- Broken recipes
+- Invalid item references
+
+Only enable for testing or if you understand the implications.
+
+## Configuration workflow
+
+<Steps>
+  <Step title="Locate config files">
+    Navigate to `config/bards_rpg/` in your Minecraft installation directory.
+  </Step>
+
+  <Step title="Launch game once">
+    If config files don't exist, launch the game once to generate defaults.
+  </Step>
+
+  <Step title="Close the game">
+    Always edit configs while the game is closed to prevent overwrites.
+  </Step>
+
+  <Step title="Edit with JSON editor">
+    Use a text editor with JSON support (VS Code, Notepad++, etc.).
+    
+    **Important**: Maintain proper JSON syntax (quotes, commas, brackets).
+  </Step>
+
+  <Step title="Save and test">
+    Save changes and launch the game. Check logs for any config errors.
+  </Step>
+</Steps>
+
+## Sanitization system
+
+All Bards RPG configs use the sanitization feature:
+
+```java
+.builder()
+.setDirectory(MOD_ID)
+.sanitize(true)  // Enabled for all configs
+.build()
+```
+
+### What sanitization does
+
+- **Validates values**: Ensures numbers are within acceptable ranges
+- **Corrects errors**: Automatically fixes invalid entries
+- **Adds missing fields**: Inserts default values for missing keys
+- **Logs warnings**: Reports corrected issues in game logs
+
+### Benefits
+
+- Prevents crashes from invalid configs
+- Maintains backwards compatibility
+- Helps identify configuration mistakes
+- Allows safe config updates between mod versions
+
+## Advanced configuration
+
+### Spell power scaling
+
+To create custom power curves, modify attribute modifiers across tiers:
+
+1. Edit equipment.json
+2. Find weapon entries (lutes, lyres)
+3. Adjust spell power attribute values
+4. Maintain balance between arcane and healing
+
+### Custom armor sets
+
+While adding new armor sets requires code changes, you can:
+- Modify existing set bonuses
+- Adjust movement speed multipliers
+- Change enchantability values
+- Alter durability multipliers
+
+### Integration with other mods
+
+Bards RPG configs play well with:
+- **Spell Engine**: All spell-related configs
+- **Spell Power**: Spell school attributes
+- **RPG Classes**: Cross-class balancing
+
+## Troubleshooting
+
+### Config not loading
+
+- Check JSON syntax validity
+- Review latest.log for errors
+- Delete config to regenerate defaults
+- Ensure file permissions allow reading
+
+### Changes not applying
+
+- Restart Minecraft completely (not just reload)
+- Verify you edited the correct config file
+- Check if sanitization reverted your changes (see logs)
+- Ensure values are within valid ranges
+
+### Missing items
+
+- Verify required mods are installed
+- Check `tweaks.json` settings
+- Review item registration logs
+- Confirm mod compatibility versions
+
+## Best practices
+
+- **Backup configs** before major changes
+- **Test incrementally** - change one value at a time
+- **Document modifications** for future reference
+- **Share configs** with your server/modpack users
+- **Version control** configs for multiplayer consistency
+- **Read logs** to understand sanitization corrections

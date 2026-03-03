@@ -1,0 +1,232 @@
+---
+title: "Tweaks configuration"
+description: "Configure development and compatibility tweaks for the Bards RPG mod"
+---
+
+## Overview
+
+The tweaks configuration API provides options for development and mod compatibility settings. Configuration is handled through the `tweaksConfig` manager, which reads from and writes to the `tweaks.json` file in the mod's config directory.
+
+## Configuration manager
+
+The tweaks configuration is managed by `BardsMod.tweaksConfig`:
+
+```java
+public static ConfigManager<TweaksConfig> tweaksConfig = new ConfigManager<>
+        ("tweaks", new TweaksConfig())
+        .builder()
+        .setDirectory(MOD_ID)
+        .sanitize(true)
+        .build();
+```
+
+### Properties
+
+<ParamField path="name" type="string" default="tweaks">
+  The configuration file name (generates `tweaks.json`)
+</ParamField>
+
+<ParamField path="directory" type="string" default="bards_rpg">
+  The mod's configuration directory
+</ParamField>
+
+<ParamField path="sanitize" type="boolean" default="true">
+  Automatically sanitizes and validates configuration values
+</ParamField>
+
+## Configuration options
+
+### Ignore items required mods
+
+<ParamField path="ignore_items_required_mods" type="boolean" default="false">
+  When enabled, allows registration of items that normally require other mods to be installed
+  
+  This tweak is useful for:
+  - Development and testing without installing all mod dependencies
+  - Creating modpacks with custom item availability
+  - Debugging item registration issues
+  
+  **Affected items:**
+  - Storyteller armor set (normally requires `armory_rpgs`)
+  - Ruby weapons (normally requires `betternether`)
+  - Aeternium weapons (normally requires `betterend`)
+  - Aether weapons (normally requires `aether`)
+  - Unique weapons (normally requires `arsenal` or `loot_n_explore`)
+</ParamField>
+
+## Configuration file structure
+
+```json
+{
+  "ignore_items_required_mods": false
+}
+```
+
+## Usage examples
+
+### Accessing configuration
+
+```java
+import com.bards.BardsMod;
+import com.bards.config.TweaksConfig;
+
+// Refresh configuration from file
+BardsMod.tweaksConfig.refresh();
+
+// Access current configuration
+TweaksConfig config = BardsMod.tweaksConfig.value;
+
+// Check if items with required mods should be ignored
+boolean ignoreRequirements = config.ignore_items_required_mods;
+```
+
+### Conditional item registration
+
+The tweak is used throughout item registration to bypass mod dependency checks:
+
+```java
+// Storyteller armor - requires armory_rpgs
+if (FabricLoader.getInstance().isModLoaded("armory_rpgs") 
+    || BardsMod.tweaksConfig.value.ignore_items_required_mods) {
+    storytellerArmorSet = create(
+        storytellers_garb,
+        Identifier.of(MOD_ID, "storyteller_garb"),
+        // ... configuration
+    );
+}
+
+// Ruby weapons - requires betternether
+if (BardsMod.tweaksConfig.value.ignore_items_required_mods 
+    || FabricLoader.getInstance().isModLoaded("betternether")) {
+    rapier("ruby_rapier", material, damage);
+    lute("ruby_lute", material, damage);
+}
+```
+
+### Development environment
+
+The tweak is automatically enabled in development environments:
+
+```java
+public static void init() {
+    itemConfig.refresh();
+    effectsConfig.refresh();
+    villageConfig.refresh();
+    tweaksConfig.refresh();
+    
+    // Auto-enable in development
+    if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+        tweaksConfig.value.ignore_items_required_mods = true;
+    }
+}
+```
+
+### Manual configuration
+
+To enable the tweak manually, edit the configuration file:
+
+```json
+{
+  "ignore_items_required_mods": true
+}
+```
+
+Then restart the game or reload the configuration:
+
+```java
+BardsMod.tweaksConfig.refresh();
+```
+
+## Affected mod dependencies
+
+The following mod dependencies can be bypassed with this tweak:
+
+<ParamField path="armory_rpgs" type="string">
+  **Required for:** Storyteller armor set (Tier 5)
+  
+  The highest tier armor with 30% spell power bonus and 6% movement speed
+</ParamField>
+
+<ParamField path="betternether" type="string">
+  **Required for:** Ruby weapons
+  
+  - Ruby Rapier
+  - Ruby Lute
+  
+  Uses nether ruby as repair ingredient
+</ParamField>
+
+<ParamField path="betterend" type="string">
+  **Required for:** Aeternium weapons
+  
+  - Aeternium Rapier
+  - Aeternium Lyre
+  
+  Uses aeternium ingot as repair ingredient
+</ParamField>
+
+<ParamField path="aether" type="string">
+  **Required for:** Aether/Valkyrie weapons
+  
+  - Valkyrie Rapier
+  - Angelic Lute
+  - Valkyrie Lyre
+  
+  Uses ambrosium shard as repair ingredient
+</ParamField>
+
+<ParamField path="loot_n_explore" type="string">
+  **Required for:** Boss-themed unique weapons
+  
+  - Dragon's Rapier, Dragon Lute
+  - Coral Rapier, Siren's Lyre
+  - Withered Rapier
+  - Glacial Rapier
+</ParamField>
+
+<ParamField path="arsenal" type="string">
+  **Required for:** Named unique weapons
+  
+  - Singing Blade
+  - Lute of Ruby Verdict
+  - Spellthief's Lute
+  - Lyre of Apollo
+  - Lyre of Antecael
+</ParamField>
+
+## Best practices
+
+<Warning>
+  **Production use:** Only enable `ignore_items_required_mods` in production if you understand the implications. Items may have missing textures or behaviors if their required mods are not installed.
+</Warning>
+
+<Tip>
+  **Development:** This tweak is automatically enabled in development environments, making it easier to test all items without installing dependencies.
+</Tip>
+
+<Note>
+  **Modpacks:** When creating modpacks, it's better to include the actual required mods rather than using this tweak, as it provides the best player experience.
+</Note>
+
+## File location
+
+The tweaks configuration file is located at:
+
+```
+config/bards_rpg/tweaks.json
+```
+
+This file is automatically created with default values on first run and can be edited to customize tweak settings.
+
+## Future tweaks
+
+The `TweaksConfig` class can be extended with additional configuration options as needed:
+
+```java
+public class TweaksConfig {
+    public boolean ignore_items_required_mods = false;
+    // Add new tweaks here in future updates
+}
+```
+
+New tweaks should maintain backward compatibility by providing sensible default values.

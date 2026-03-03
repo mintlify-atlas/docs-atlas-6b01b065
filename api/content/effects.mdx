@@ -1,0 +1,230 @@
+---
+title: Effects
+description: API documentation for the BardsEffects class which manages status effect registrations and attribute modifiers
+---
+
+## Overview
+
+The `BardsEffects` class is responsible for registering and configuring all status effects used by Bards RPG spells. Each effect is defined with attribute modifiers that enhance or protect the affected entity.
+
+## Effect entries
+
+### Ballad
+
+**ID:** `bards_rpg:ballad`
+
+**Display name:** Ballad
+
+**Description:** Increases Attack Damage & Spell Power.
+
+**Category:** BENEFICIAL
+
+**Color:** `0x9999ff` (light blue)
+
+**Attribute modifiers:**
+
+<ParamField path="spell_power.generic" type="float">
+  +2.5% spell power per amplifier level
+  
+  **Operation:** ADD_MULTIPLIED_BASE
+</ParamField>
+
+<ParamField path="generic.attack_damage" type="float">
+  +2.5% attack damage per amplifier level
+  
+  **Operation:** ADD_MULTIPLIED_BASE
+</ParamField>
+
+**Usage:** Applied by the Magical Ballad spell to boost offensive capabilities for 8 seconds, stackable up to 3 times.
+
+```java
+public static Effects.Entry BALLAD = add(new Effects.Entry(
+    Identifier.of(MOD_ID, "ballad"),
+    "Ballad",
+    "Increases Attack Damage & Spell Power.",
+    new CustomStatusEffect(StatusEffectCategory.BENEFICIAL, 0x9999ff),
+    new EffectConfig(
+        List.of(
+            new AttributeModifier(
+                SpellSchools.GENERIC.id.toString(),
+                0.025F,
+                EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE
+            ),
+            new AttributeModifier(
+                EntityAttributes.GENERIC_ATTACK_DAMAGE.getIdAsString(),
+                0.025F,
+                EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE
+            )
+        )
+    )
+));
+```
+
+### Troubadours Minuet
+
+**ID:** `bards_rpg:troubadours_minuet`
+
+**Display name:** Troubadours Minuet
+
+**Description:** Reduces damage taken.
+
+**Category:** BENEFICIAL
+
+**Color:** `0x9999ff` (light blue)
+
+**Attribute modifiers:**
+
+<ParamField path="spell_engine.damage_taken" type="float">
+  -5% damage taken per amplifier level
+  
+  **Operation:** ADD_MULTIPLIED_BASE
+</ParamField>
+
+**Usage:** Applied by the Troubadour's Minuet spell to provide damage reduction for 10 seconds, stackable up to 3 times (max -15% damage taken).
+
+```java
+public static Effects.Entry TROUBADOURS_MINUET = add(new Effects.Entry(
+    Identifier.of(MOD_ID, "troubadours_minuet"),
+    "Troubadours Minuet",
+    "Reduces damage taken.",
+    new CustomStatusEffect(StatusEffectCategory.BENEFICIAL, 0x9999ff),
+    new EffectConfig(
+        List.of(
+            new AttributeModifier(
+                SpellEngineAttributes.DAMAGE_TAKEN.id.toString(),
+                -0.05F,
+                EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE
+            )
+        )
+    )
+));
+```
+
+### Army's Paeon (Stash)
+
+**ID:** `bards_rpg:armys_paeon`
+
+**Display name:** Army's Paeon
+
+**Description:** The player buffs nearby allies if he damages enemies with melee hits, arrows or spells.
+
+**Category:** BENEFICIAL
+
+**Color:** `0x9999ff` (light blue)
+
+**Attribute modifiers:** None (stash effect for triggering mechanics)
+
+**Usage:** Applied by the Army's Paeon spell as a stash effect that triggers when the player deals damage via melee, arrows, or spells.
+
+```java
+public static Effects.Entry ARMYS_PAEON_STASH = add(new Effects.Entry(
+    Identifier.of(MOD_ID, "armys_paeon"),
+    "Army's Paeon",
+    "The player buffs nearby allies if he damages enemies with melee hits, arrows or spells.",
+    new CustomStatusEffect(StatusEffectCategory.BENEFICIAL, 0x9999ff),
+    new EffectConfig(
+        List.of()
+    )
+));
+```
+
+### Army's Motivation
+
+**ID:** `bards_rpg:armys_motivation`
+
+**Display name:** Army's Motivation
+
+**Description:** With each melee-, arrow- & spell-hit you deal magic damage, according to the highest attribute, scaling with the effect amplifier.
+
+**Category:** BENEFICIAL
+
+**Color:** `0x9999ff` (light blue)
+
+**Attribute modifiers:** None (damage is handled by custom logic)
+
+**Usage:** Applied to allies near the caster when Army's Paeon triggers activate, lasting 8 seconds and stackable up to 3 times.
+
+```java
+public static Effects.Entry ARMYS_PAEON = add(new Effects.Entry(
+    Identifier.of(MOD_ID, "armys_motivation"),
+    "Army's Motivation",
+    "With each melee-, arrow- & spell-hit you deal magic damage, according to the highest attribute, scaling with the effect amplifier.",
+    new CustomStatusEffect(StatusEffectCategory.BENEFICIAL, 0x9999ff),
+    new EffectConfig(
+        List.of()
+    )
+));
+```
+
+## Registration
+
+Effects are registered through the `register` method which configures synchronization and registers all entries:
+
+```java
+public static void register(ConfigFile.Effects config) {
+    for (var entry : entries) {
+        Synchronized.configure(entry.effect, true);
+    }
+    Effects.register(entries, config.effects);
+}
+```
+
+<ParamField path="config" type="ConfigFile.Effects" required>
+  Configuration file containing effect settings
+</ParamField>
+
+## Entry structure
+
+All effects use the `Effects.Entry` class from the Spell Engine API:
+
+<ResponseField name="id" type="Identifier">
+  Unique identifier for the effect
+</ResponseField>
+
+<ResponseField name="name" type="String">
+  Display name shown in the game UI
+</ResponseField>
+
+<ResponseField name="description" type="String">
+  Description of what the effect does
+</ResponseField>
+
+<ResponseField name="effect" type="CustomStatusEffect">
+  The status effect instance with category and color
+</ResponseField>
+
+<ResponseField name="config" type="EffectConfig">
+  Configuration containing attribute modifiers
+</ResponseField>
+
+## Attribute modifier operations
+
+All attribute modifiers in Bards RPG use the `ADD_MULTIPLIED_BASE` operation:
+
+- **ADD_MULTIPLIED_BASE**: Adds a percentage of the base value
+  - Example: Base damage 10, modifier 0.025 (2.5%), amplifier 2
+  - Calculation: `10 * (1 + 0.025 * 3) = 10.75`
+
+## Usage example
+
+```java
+import com.bards.effect.BardsEffects;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+
+// Apply Ballad effect to an entity
+LivingEntity target = ...;
+StatusEffectInstance ballad = new StatusEffectInstance(
+    BardsEffects.BALLAD.effect,
+    160, // 8 seconds (20 ticks/sec)
+    0,   // amplifier (level 1)
+    false,
+    true
+);
+target.addStatusEffect(ballad);
+
+// Access effect configuration
+var balladConfig = BardsEffects.BALLAD.config();
+var firstModifier = balladConfig.firstModifier();
+float bonusValue = firstModifier.value; // 0.025
+```
