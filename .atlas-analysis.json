@@ -1,0 +1,104 @@
+{
+  "projectType": "general",
+  "projectName": "Bards RPG",
+  "projectDescription": "A Minecraft mod that adds a Bard class with musical weapons, spells, armor sets, and magical effects for Fabric and NeoForge.",
+  "theme": "almond",
+  "primaryColor": "#9966ff",
+  "lightColor": "#b399ff",
+  "darkColor": "#7733ee",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Gameplay",
+            "pages": [
+              "gameplay/weapons",
+              "gameplay/armor",
+              "gameplay/spells",
+              "gameplay/effects"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/getting-started",
+              "guides/progression",
+              "guides/configurations"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Core",
+            "pages": [
+              "api/overview",
+              "api/bards-mod",
+              "api/registration"
+            ]
+          },
+          {
+            "group": "Items",
+            "pages": [
+              "api/items/weapons",
+              "api/items/armor",
+              "api/items/spell-books"
+            ]
+          },
+          {
+            "group": "Content",
+            "pages": [
+              "api/content/spells",
+              "api/content/effects",
+              "api/content/sounds"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "api/config/equipment",
+              "api/config/effects",
+              "api/config/tweaks"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Musical weapons including Rapiers, Lutes, and Lyres with spell-casting abilities",
+    "Bard armor sets with movement speed bonuses and spell power enhancements",
+    "Unique spells like Troubadour's Minuet, Magical Ballad, Encore, and Army's Paeon",
+    "Status effects that buff allies and debuff enemies through music",
+    "Cross-platform support for both Fabric and NeoForge mod loaders",
+    "Integration with spell engine and RPG systems",
+    "Configurable equipment stats and effect modifiers",
+    "Tiered progression system with materials from vanilla and modded content"
+  ],
+  "publicApiSurface": [
+    "BardsMod.init() - Main mod initialization",
+    "BardsMod.registerItems() - Register all bard weapons and armor",
+    "BardsMod.registerEffects() - Register all bard effects",
+    "Weapons.register() - Register weapon entries (Rapiers, Lutes, Lyres)",
+    "Armors.register() - Register armor sets (Entertainer, Troubadour, Storyteller)",
+    "BardBooks.register() - Register spell books",
+    "BardsEffects.register() - Register status effects (Ballad, Minuet, Army's Paeon)",
+    "BardsSpells entries - Spell definitions (troubadours_minuet, magical_ballad, encore, armys_paeon)",
+    "itemConfig - Equipment configuration manager",
+    "effectsConfig - Effects configuration manager",
+    "tweaksConfig - Tweaks configuration manager",
+    "villageConfig - Village structure configuration"
+  ]
+}
